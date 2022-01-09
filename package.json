@@ -1,8 +1,22 @@
 {
+  "name": "the-game-of-life-api",
+  "version": "1.0.0",
+  "engines": {
+    "node": "16.13.1"
+  },
+  "description": "A REST api for requesting json templates for Conway's Game Of Life.",
+  "author": "timjacksonm",
+  "license": "ISC",
+  "scripts": {
+    "start": "node index.js",
+    "devstart": "nodemon index.js"
+  },
   "dependencies": {
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
-    "mongoose": "^6.1.5",
+    "mongoose": "^6.1.5"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.15"
   }
 }
