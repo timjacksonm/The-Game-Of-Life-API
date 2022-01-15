@@ -1,4 +1,4 @@
-const { query, check } = require('express-validator');
+const { query, check, body } = require('express-validator');
 
 const validateAndSanitize = (method) => {
   switch (method) {
@@ -14,6 +14,23 @@ const validateAndSanitize = (method) => {
         check('id')
           .isLength({ min: 24, max: 24 })
           .withMessage('Id must be a length of 24'),
+        query('select')
+          .optional({ checkFalsy: true })
+          .isJSON()
+          .withMessage('Invalid JSON with selection'),
+      ];
+    }
+    case 'wikibysearch': {
+      return [
+        body('path')
+          .isString()
+          .trim()
+          .custom((value) => !/\s/.test(value))
+          .withMessage('1 word limit')
+          .custom((value) =>
+            ['author', 'title'].some((string) => string === value)
+          )
+          .withMessage('Invalid path parameter'),
         query('select')
           .optional({ checkFalsy: true })
           .isJSON()

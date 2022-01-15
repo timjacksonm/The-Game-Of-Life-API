@@ -30,7 +30,7 @@ router.get(
   }
 );
 
-//get pattern by :id options {select: JSON Array}
+//get wikicollection pattern by :id -- options { select: JSON Array }
 router.get(
   '/wikicollection/patterns/:id/:select?',
   validateAndSanitize('wikibyid'),
@@ -49,13 +49,46 @@ router.get(
   }
 );
 
-//get all pattern names options: {includedescriptions: 0 || 1}
-router.get('/:collection/titles', async (req, res) => {});
+//find all wikicollection patterns by search -- options { select: JSON Array }
+router.get(
+  '/wikicollection/search/:select?',
+  validateAndSanitize('wikibysearch'),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors });
+    }
+    if (!req.body.path || !req.body.value) {
+      return res.status(400).json({ message: 'Invalid search parameters' });
+    }
+    try {
+      //throw is set for object if there is no selection in query. aggregate doesn't take an array of strings like findByID does for projection :(
+      let projection = { throw: 0 };
+      if (req.query.select) {
+        //creat object of array { field: 1 }
+        projection = JSON.parse(req.query.select).reduce(
+          (acc, curr) => ((acc[curr] = 1), acc),
+          {}
+        );
+      }
 
-//find pattern by title
-router.get('/:collection/:title', async (req, res) => {});
-
-//find pattern by author
-router.get('/:collection/:author', async (req, res) => {});
+      const response = await WikiTemplate.aggregate([
+        {
+          $search: {
+            index: 'custom',
+            text: {
+              query: req.body.value,
+              path: req.body.path,
+            },
+          },
+        },
+        { $project: projection },
+      ]);
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(500).json({ message: err });
+    }
+  }
+);
 
 module.exports = router;
