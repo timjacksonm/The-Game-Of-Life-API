@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const WikiTemplate = require('../models/wikitemplate');
-const CustomTemplate = require('../models/customtemplate');
+const WikiTemplates = require('../models/wikitemplate');
+const CustomTemplates = require('../models/customtemplate');
 const { validateAndSanitize } = require('./validateandsanitize');
 const { validationResult } = require('express-validator');
 
@@ -20,7 +20,7 @@ router.get(
     }
     try {
       const count = Number(req.query.count) || 10;
-      const response = await WikiTemplate.aggregate([
+      const response = await WikiTemplates.aggregate([
         { $sample: { size: count } },
       ]);
       res.status(200).json(response);
@@ -41,7 +41,7 @@ router.get(
     }
     try {
       const count = Number(req.query.count) || 10;
-      const response = await CustomTemplate.aggregate([
+      const response = await CustomTemplates.aggregate([
         { $sample: { size: count } },
       ]);
       res.status(200).json(response);
@@ -62,7 +62,29 @@ router.get(
     }
     try {
       const projection = req.query.select ? JSON.parse(req.query.select) : '';
-      const response = await WikiTemplate.findById(req.params.id, projection);
+      const response = await WikiTemplates.findById(req.params.id, projection);
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(500).json({ message: err });
+    }
+  }
+);
+
+//**GET** customcollection pattern by :id -- options { select: JSON Array }
+router.get(
+  '/customcollection/patterns/:id/:select?',
+  validateAndSanitize('byid'),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors });
+    }
+    try {
+      const projection = req.query.select ? JSON.parse(req.query.select) : '';
+      const response = await CustomTemplates.findById(
+        req.params.id,
+        projection
+      );
       res.status(200).json(response);
     } catch (err) {
       res.status(500).json({ message: err });
@@ -94,7 +116,7 @@ router.get(
         );
       }
 
-      const response = await WikiTemplate.aggregate([
+      const response = await WikiTemplates.aggregate([
         {
           $search: {
             index: 'custom',

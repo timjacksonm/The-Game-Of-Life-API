@@ -23,4 +23,4 @@ const TemplateSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('WikiTemplate', TemplateSchema);
+module.exports = mongoose.model('WikiTemplates', TemplateSchema);
