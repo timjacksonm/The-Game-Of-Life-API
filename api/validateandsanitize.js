@@ -42,6 +42,9 @@ const validateAndSanitize = (method) => {
           .withMessage('Invalid value or not within range'),
       ];
     }
+    case 'create': {
+      return [];
+    }
   }
 };
 

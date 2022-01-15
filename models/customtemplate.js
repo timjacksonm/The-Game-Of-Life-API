@@ -11,6 +11,10 @@ const TemplateSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
+  description: {
+    type: Array,
+    required: true,
+  },
   size: {
     x: { type: Number, required: true },
     y: { type: Number, required: true },
