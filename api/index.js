@@ -9,9 +9,9 @@ router.get('/', async (req, res) => {
   res.json({ message: 'Welcome to The Game Of Life API!' });
 });
 
-//get random patterns options: {howmany: num}
+//get random patterns from wikicollection -- options: { count: num }
 router.get(
-  '/wikicollection/patterns/:count?',
+  '/wikicollection/patterns/',
   validateAndSanitize('wikirandom'),
   async (req, res) => {
     const errors = validationResult(req);
@@ -30,8 +30,24 @@ router.get(
   }
 );
 
-//get pattern by :id options {whattoinclude: 0 || 1}
-router.get('/:collection/patterns/:id', async (req, res) => {});
+//get pattern by :id options {select: JSON Array}
+router.get(
+  '/wikicollection/patterns/:id/:select?',
+  validateAndSanitize('wikibyid'),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors });
+    }
+    try {
+      const projection = req.query.select ? JSON.parse(req.query.select) : '';
+      const response = await WikiTemplate.findById(req.params.id, projection);
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(500).json({ message: err });
+    }
+  }
+);
 
 //get all pattern names options: {includedescriptions: 0 || 1}
 router.get('/:collection/titles', async (req, res) => {});
