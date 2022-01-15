@@ -2,7 +2,7 @@ const { query, check, body } = require('express-validator');
 
 const validateAndSanitize = (method) => {
   switch (method) {
-    case 'wikirandom': {
+    case 'random': {
       return [
         query('count')
           .optional({ checkFalsy: true })
@@ -10,7 +10,7 @@ const validateAndSanitize = (method) => {
           .withMessage('Invalid value or not within range'),
       ];
     }
-    case 'wikibyid': {
+    case 'byid': {
       return [
         check('id')
           .isLength({ min: 24, max: 24 })
@@ -21,7 +21,7 @@ const validateAndSanitize = (method) => {
           .withMessage('Invalid JSON with selection'),
       ];
     }
-    case 'wikibysearch': {
+    case 'bysearch': {
       return [
         body('path')
           .isString()
