@@ -6,7 +6,8 @@ const validateAndSanitize = (method) => {
       return [
         query('count')
           .optional({ checkFalsy: true })
-          .isInt({ min: 1, max: 2339 }),
+          .isInt({ min: 1, max: 2339 })
+          .withMessage('Invalid value or not within range'),
       ];
     }
     case 'wikibyid': {
@@ -35,6 +36,10 @@ const validateAndSanitize = (method) => {
           .optional({ checkFalsy: true })
           .isJSON()
           .withMessage('Invalid JSON with selection'),
+        query('count')
+          .optional({ checkFalsy: true })
+          .isInt({ min: 1, max: 2339 })
+          .withMessage('Invalid value or not within range'),
       ];
     }
   }

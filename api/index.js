@@ -49,7 +49,7 @@ router.get(
   }
 );
 
-//find all wikicollection patterns by search -- options { select: JSON Array }
+//find all wikicollection patterns by search -- options { select: JSON Array, count: num }
 router.get(
   '/wikicollection/search/:select?',
   validateAndSanitize('wikibysearch'),
@@ -62,6 +62,7 @@ router.get(
       return res.status(400).json({ message: 'Invalid search parameters' });
     }
     try {
+      const count = Number(req.query.count) || 10;
       //throw is set for object if there is no selection in query. aggregate doesn't take an array of strings like findByID does for projection :(
       let projection = { throw: 0 };
       if (req.query.select) {
@@ -83,6 +84,7 @@ router.get(
           },
         },
         { $project: projection },
+        { $sample: { size: count } },
       ]);
       res.status(200).json(response);
     } catch (err) {
