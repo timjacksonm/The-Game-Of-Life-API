@@ -3,27 +3,29 @@ const router = express.Router();
 const WikiTemplate = require('../models/template');
 const template_controller = require('../controllers/officialTemplateController');
 
+router.get('/', async (req, res) => {
+  res.json({ message: 'Welcome to The Game Of Life API!' });
+});
+
 //get random pattern
-router.get('/:collection/pattern', async (req, res) => {
-  const { collection } = req.params;
-
-  switch (collection) {
-    case 'wikitemplates':
-      const response = await WikiTemplate.findOne();
-      res.status(200).json(response);
-      break;
-    case 'customtemplates':
-      res.send('test');
-      break;
-
-    default:
-      res.status(400).json({ message: 'collection not found.' });
-      break;
+router.get('/wikicollection/pattern', async (req, res) => {
+  try {
+    const response = await WikiTemplate.findOne();
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(500).json({ message: err });
   }
 });
 
 //get random patterns options: {howmany: num}
-router.get('/:collection/patterns', async (req, res) => {});
+router.get('/wikicollection/patterns', async (req, res) => {
+  try {
+    const response = await WikiTemplate.find();
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+});
 
 //get pattern by :id options {whattoinclude: 0 || 1}
 router.get('/:collection/patterns/:id', async (req, res) => {});
