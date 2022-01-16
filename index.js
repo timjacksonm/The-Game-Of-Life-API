@@ -3,12 +3,15 @@ const createError = require('http-errors');
 const router = require('./api/index');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
+const compression = require('compression');
 const errorHandler = require('./errorhandler');
 const debug = require('debug')('startup:app');
 dotenv.config();
 const PORT = process.env.PORT || 8080;
 
 const app = express();
+
+app.use(compression());
 
 app.use(helmet());
 
@@ -28,8 +31,7 @@ app.use('/', router);
 app.use(function (req, res, next) {
   next(createError(404));
 });
-debug('test');
-// error handler
+
 app.use(errorHandler);
 
 app.listen(PORT, () => debug(`Server running on port ${PORT}`));
