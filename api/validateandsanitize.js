@@ -1,4 +1,5 @@
 const { query, check, body } = require('express-validator');
+const CustomTemplates = require('../models/customtemplate');
 
 const validateAndSanitize = (method) => {
   switch (method) {
@@ -24,7 +25,6 @@ const validateAndSanitize = (method) => {
     case 'bysearch': {
       return [
         body('path')
-          .isString()
           .trim()
           .custom((value) => !/\s/.test(value))
           .withMessage('1 word limit')
@@ -43,7 +43,43 @@ const validateAndSanitize = (method) => {
       ];
     }
     case 'create': {
-      return [];
+      return [
+        body('author').notEmpty().withMessage('Author is invalid.').trim(),
+        body('title')
+          .notEmpty()
+          .withMessage('Title is invalid.')
+          .trim()
+          .custom((val) => CustomTemplates.isUniqueTitle(val))
+          .withMessage('Title already in use'),
+        body('description')
+          .notEmpty()
+          .withMessage('Description is invalid.')
+          .isJSON()
+          .withMessage('Invalid JSON with description'),
+        body('size')
+          .notEmpty()
+          .withMessage('Size is invalid.')
+          .isJSON()
+          .withMessage('Invalid JSON with size'),
+        body('rleString')
+          .trim()
+          .notEmpty()
+          .withMessage('rleString is invalid.')
+          .custom((value) => !/\s/.test(value))
+          .withMessage('Invalid rle string. Can\t contain spaces')
+          .custom((string) => {
+            if (
+              /[AaC-Nc-nP-Zp-z\@\_\#\%\^\&\*\(\)\+\=\-\[\]\{\}\;\:\'\"\,\<\.\>\/\?\`\~]/g.test(
+                string
+              )
+            ) {
+              throw new Error();
+            } else {
+              return true;
+            }
+          })
+          .withMessage('Invalid characters in rle string.'),
+      ];
     }
   }
 };

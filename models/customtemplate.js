@@ -26,4 +26,14 @@ const TemplateSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
 });
 
+TemplateSchema.statics.isUniqueTitle = function isUniqueTitle(string) {
+  return this.find({ title: string }).then((result) => {
+    if (result.length) {
+      throw new Error();
+    } else {
+      return true;
+    }
+  });
+};
+
 module.exports = mongoose.model('CustomTemplates', TemplateSchema);
