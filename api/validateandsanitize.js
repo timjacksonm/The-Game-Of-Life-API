@@ -3,12 +3,16 @@ const CustomTemplates = require('../models/customtemplate');
 
 const validateAndSanitize = (method) => {
   switch (method) {
-    case 'random': {
+    case 'list': {
       return [
         query('count')
           .optional({ checkFalsy: true })
           .isInt({ min: 1, max: 2339 })
           .withMessage('Invalid value or not within range'),
+        query('select')
+          .optional({ checkFalsy: true })
+          .isJSON()
+          .withMessage('Invalid JSON with selection'),
       ];
     }
     case 'byid': {

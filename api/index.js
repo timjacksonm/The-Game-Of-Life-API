@@ -9,10 +9,10 @@ router.get('/', async (req, res) => {
   res.json({ message: 'Welcome to The Game Of Life API!' });
 });
 
-//**GET** random patterns from wikicollection -- options: { count: num }
+//**GET** patterns from wikicollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
   '/wikicollection/patterns/',
-  validateAndSanitize('random'),
+  validateAndSanitize('list'),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -20,8 +20,20 @@ router.get(
     }
     try {
       const count = Number(req.query.count) || 10;
+      //throw is set for object if there is no selection in query. aggregate doesn't take an array of strings like findByID does for projection :(
+      let projection = { throw: 0 };
+      if (req.query.select) {
+        //create object of array { field: 1 }
+        projection = JSON.parse(req.query.select).reduce(
+          (acc, curr) => ((acc[curr] = 1), acc),
+          {}
+        );
+      }
+
       const response = await WikiTemplates.aggregate([
         { $sample: { size: count } },
+        { $sort: { 'size.x': 1, 'size.y': 1 } },
+        { $project: projection },
       ]);
       res.status(200).json(response);
     } catch (err) {
@@ -30,10 +42,10 @@ router.get(
   }
 );
 
-//**GET** random patterns from customcollection -- options: { count: num }
+//**GET** patterns from customcollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
   '/customcollection/patterns/',
-  validateAndSanitize('random'),
+  validateAndSanitize('list'),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -41,8 +53,19 @@ router.get(
     }
     try {
       const count = Number(req.query.count) || 10;
+      let projection = { throw: 0 };
+      if (req.query.select) {
+        //create object of array { field: 1 }
+        projection = JSON.parse(req.query.select).reduce(
+          (acc, curr) => ((acc[curr] = 1), acc),
+          {}
+        );
+      }
+
       const response = await CustomTemplates.aggregate([
         { $sample: { size: count } },
+        { $sort: { 'size.x': 1, 'size.y': 1 } },
+        { $project: projection },
       ]);
       res.status(200).json(response);
     } catch (err) {
@@ -106,10 +129,9 @@ router.get(
     }
     try {
       const count = Number(req.query.count) || 10;
-      //throw is set for object if there is no selection in query. aggregate doesn't take an array of strings like findByID does for projection :(
       let projection = { throw: 0 };
       if (req.query.select) {
-        //creat object of array { field: 1 }
+        //create object of array { field: 1 }
         projection = JSON.parse(req.query.select).reduce(
           (acc, curr) => ((acc[curr] = 1), acc),
           {}
@@ -136,7 +158,7 @@ router.get(
   }
 );
 
-//**Post**
+//**Post** create new pattern and save to CustomTemplates in db
 router.post(
   '/customcollection/patterns/',
   validateAndSanitize('create'),
