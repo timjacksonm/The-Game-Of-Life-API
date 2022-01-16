@@ -1,10 +1,16 @@
 const express = require('express');
+const createError = require('http-errors');
 const router = require('./api/index');
 const dotenv = require('dotenv');
+const helmet = require('helmet');
+const errorHandler = require('./errorhandler');
+const debug = require('debug')('startup:app');
 dotenv.config();
 const PORT = process.env.PORT || 8080;
 
 const app = express();
+
+app.use(helmet());
 
 //Set up mongoose connection
 const mongoose = require('mongoose');
@@ -18,4 +24,12 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', router);
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+debug('test');
+// error handler
+app.use(errorHandler);
+
+app.listen(PORT, () => debug(`Server running on port ${PORT}`));

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const debug = require('debug')('startup:api');
 const WikiTemplates = require('../models/wikitemplate');
 const CustomTemplates = require('../models/customtemplate');
 const { validateAndSanitize } = require('./validateandsanitize');
@@ -16,6 +17,7 @@ router.get(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      debug('%j', errors);
       return res.status(400).json({ message: errors });
     }
     try {
@@ -37,6 +39,7 @@ router.get(
       ]);
       res.status(200).json(response);
     } catch (err) {
+      debug(err);
       res.status(500).json({ message: err });
     }
   }
@@ -49,6 +52,7 @@ router.get(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      debug('%j', errors);
       return res.status(400).json({ message: errors });
     }
     try {
@@ -69,6 +73,7 @@ router.get(
       ]);
       res.status(200).json(response);
     } catch (err) {
+      debug(err);
       res.status(500).json({ message: err });
     }
   }
@@ -81,6 +86,7 @@ router.get(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      debug('%j', errors);
       return res.status(400).json({ message: errors });
     }
     try {
@@ -88,6 +94,7 @@ router.get(
       const response = await WikiTemplates.findById(req.params.id, projection);
       res.status(200).json(response);
     } catch (err) {
+      debug(err);
       res.status(500).json({ message: err });
     }
   }
@@ -100,6 +107,7 @@ router.get(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      debug('%j', errors);
       return res.status(400).json({ message: errors });
     }
     try {
@@ -110,6 +118,7 @@ router.get(
       );
       res.status(200).json(response);
     } catch (err) {
+      debug(err);
       res.status(500).json({ message: err });
     }
   }
@@ -122,6 +131,7 @@ router.get(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      debug('%j', errors);
       return res.status(400).json({ message: errors });
     }
     if (!req.body.path || !req.body.value) {
@@ -153,18 +163,20 @@ router.get(
       ]);
       res.status(200).json(response);
     } catch (err) {
+      debug(err);
       res.status(500).json({ message: err });
     }
   }
 );
 
-//**Post** create new pattern and save to CustomTemplates in db
+//**Post** save new pattern to CustomTemplates in db
 router.post(
   '/customcollection/patterns/',
   validateAndSanitize('create'),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      debug('%j', errors);
       return res.status(400).json({ message: errors });
     }
     try {
@@ -180,6 +192,7 @@ router.post(
       });
       res.status(201).json(pattern);
     } catch (err) {
+      debug(err);
       res.status(500).json({ message: err });
     }
   }
