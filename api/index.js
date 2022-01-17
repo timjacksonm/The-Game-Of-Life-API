@@ -180,9 +180,7 @@ router.post(
       return res.status(400).json({ message: errors });
     }
     try {
-      const description = JSON.parse(req.body.description);
-      const size = JSON.parse(req.body.size);
-      const { author, title, rleString } = req.body;
+      const { author, title, description, size, rleString } = req.body;
       const pattern = await CustomTemplates.create({
         author,
         title,

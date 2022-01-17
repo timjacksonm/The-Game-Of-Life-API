@@ -1,4 +1,4 @@
-const { query, check, body, param } = require('express-validator');
+const { query, check, body, param, checkSchema } = require('express-validator');
 const CustomTemplates = require('../models/customtemplate');
 
 const validateAndSanitize = (method) => {
@@ -48,27 +48,66 @@ const validateAndSanitize = (method) => {
     }
     case 'create': {
       return [
-        body('author').notEmpty().withMessage('Author is invalid.').trim(),
+        body('author')
+          .notEmpty()
+          .withMessage('Author must not be empty')
+          .isString()
+          .withMessage('Author is invalid. Must be a string')
+          .isAlpha()
+          .withMessage('Author is invalid. Must only contain letters')
+          .trim(),
         body('title')
           .notEmpty()
-          .withMessage('Title is invalid.')
+          .withMessage('Title must not be empty')
+          .isString()
+          .withMessage('Title is invalid. Must be a string')
+          .isAlpha()
+          .withMessage('Title is invalid. Must only contain letters')
           .trim()
           .custom((val) => CustomTemplates.isUniqueTitle(val))
           .withMessage('Title already in use'),
         body('description')
           .notEmpty()
-          .withMessage('Description is invalid.')
-          .isJSON()
-          .withMessage('Invalid JSON with description'),
-        body('size')
-          .notEmpty()
-          .withMessage('Size is invalid.')
-          .isJSON()
-          .withMessage('Invalid JSON with size'),
+          .withMessage('Description must not be empty')
+          .isArray()
+          .withMessage('Description is invalid. Must be array')
+          .custom((arr) =>
+            arr.map((value) => {
+              if (value.substring()) {
+                return true;
+              } else {
+                throw new Error();
+              }
+            })
+          )
+          .withMessage('Description is invalid. Include only strings in array'),
+        body('size').isObject().withMessage('Size is invalid. Must be object'),
+        body('size.x')
+          .custom((value) => {
+            if (value.toFixed()) {
+              return true;
+            } else {
+              throw new Error();
+            }
+          })
+          .withMessage(
+            'Size is invalid. For each key the value must be a number'
+          ),
+        body('size.y')
+          .custom((value) => {
+            if (value.toFixed()) {
+              return true;
+            } else {
+              throw new Error();
+            }
+          })
+          .withMessage(
+            'Size is invalid. For each key the value must be a number'
+          ),
         body('rleString')
           .trim()
           .notEmpty()
-          .withMessage('rleString is invalid.')
+          .withMessage('rleString must not be empty')
           .custom((value) => !/\s/.test(value))
           .withMessage('Invalid rle string. Can\t contain spaces')
           .custom((string) => {
