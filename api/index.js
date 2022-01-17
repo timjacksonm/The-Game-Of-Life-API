@@ -126,7 +126,7 @@ router.get(
 
 //**GET** all wikicollection patterns by search -- options { select: JSON Array, count: num }
 router.get(
-  '/wikicollection/search/:select?',
+  '/wikicollection/search/:path/:value?/:select?',
   validateAndSanitize('bysearch'),
   async (req, res) => {
     const errors = validationResult(req);
@@ -134,7 +134,7 @@ router.get(
       debug('%j', errors);
       return res.status(400).json({ message: errors });
     }
-    if (!req.body.path || !req.body.value) {
+    if (!req.params.path || !req.query.value) {
       return res.status(400).json({ message: 'Invalid search parameters' });
     }
     try {
@@ -153,8 +153,8 @@ router.get(
           $search: {
             index: 'custom',
             text: {
-              query: req.body.value,
-              path: req.body.path,
+              query: req.query.value,
+              path: req.params.path,
             },
           },
         },

@@ -28,7 +28,7 @@ const validateAndSanitize = (method) => {
     }
     case 'bysearch': {
       return [
-        body('path')
+        check('path')
           .trim()
           .custom((value) => !/\s/.test(value))
           .withMessage('1 word limit')
