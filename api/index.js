@@ -134,7 +134,7 @@ router.get(
       debug('%j', errors);
       return res.status(400).json({ message: errors });
     }
-    if (!req.params.path || !req.query.value) {
+    if (!req.query.value) {
       return res.status(400).json({ message: 'Invalid search parameters' });
     }
     try {

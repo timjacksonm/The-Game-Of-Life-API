@@ -1,4 +1,4 @@
-const { query, check, body } = require('express-validator');
+const { query, check, body, param } = require('express-validator');
 const CustomTemplates = require('../models/customtemplate');
 
 const validateAndSanitize = (method) => {
@@ -28,7 +28,7 @@ const validateAndSanitize = (method) => {
     }
     case 'bysearch': {
       return [
-        check('path')
+        param('path')
           .trim()
           .custom((value) => !/\s/.test(value))
           .withMessage('1 word limit')
