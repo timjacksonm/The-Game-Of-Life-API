@@ -12,7 +12,7 @@ Query up to 2,339 unique patterns that are well documented or save a new pattern
 
 API returns a JavaScript object that include the patterns Author, Title, Description, Size & Run length encoded string!
 
-Use my npm package <a href="https://github.com/timjacksonm/rle-decoder">**rle-decoder**</a> to decode the **rle string** into a two-dimensional array that you can use in your own project.
+Use my npm package <a target="_blank" href="https://github.com/timjacksonm/rle-decoder">**rle-decoder**</a> to decode the **rle string** into a two-dimensional array that you can use in your own project.
 
 The API allows you to subscribe and use up to 6 different endpoints to query data from the database.
 
