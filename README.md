@@ -18,7 +18,7 @@ The API allows you to subscribe and use up to 6 different endpoints to query dat
 
 ## API:
 
-Sign up / Sign in to <a href="https://rapidapi.com/">rapidapi.com</a>
+Sign up / Sign at <a href="https://rapidapi.com/">rapidapi.com</a>
 
 Navigate to API Hub and search The Game Of Life API or click <a href="">here</a>.
 
@@ -450,6 +450,6 @@ axios.request(options).then(function (response) {
 
 -v 1.0.0 first release version with updated readme.
 
-Please submit all issues via rapidapi contact api creator link.
+Please submit all issues via rapidapi contact api creator link or on repository.
 
 Thank you
