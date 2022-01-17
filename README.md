@@ -18,7 +18,7 @@ The API allows you to subscribe and use up to 6 different endpoints to query dat
 
 ## API:
 
-Sign up / Sign at <a href="https://rapidapi.com/">rapidapi.com</a>
+Sign up / Sign in at <a href="https://rapidapi.com/">rapidapi.com</a>
 
 Navigate to API Hub and search The Game Of Life API or click <a href="">here</a>.
 
