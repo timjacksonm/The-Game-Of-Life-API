@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const debug = require('debug')('startup:api');
+const { decode } = require('rle-decoder');
 const WikiTemplates = require('../models/wikitemplate');
 const CustomTemplates = require('../models/customtemplate');
 const { validateAndSanitize } = require('./validateandsanitize');
@@ -92,6 +93,10 @@ router.get(
     try {
       const projection = req.query.select ? JSON.parse(req.query.select) : '';
       const response = await WikiTemplates.findById(req.params.id, projection);
+      response._doc.rleString = decode(
+        response._doc.rleString,
+        response._doc.size
+      );
       res.status(200).json(response);
     } catch (err) {
       debug(err);
