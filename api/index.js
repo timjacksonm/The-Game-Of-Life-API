@@ -22,7 +22,9 @@ router.get(
       return res.status(400).json({ message: errors });
     }
     try {
-      const count = Number(req.query.count) || 10;
+      const count =
+        Number(req.query.count) ||
+        (await WikiTemplates.estimatedDocumentCount());
       //throw is set for object if there is no selection in query. aggregate doesn't take an array of strings like findByID does for projection :(
       let projection = { throw: 0 };
       if (req.query.select) {
@@ -57,7 +59,9 @@ router.get(
       return res.status(400).json({ message: errors });
     }
     try {
-      const count = Number(req.query.count) || 10;
+      const count =
+        Number(req.query.count) ||
+        (await CustomTemplates.estimatedDocumentCount());
       let projection = { throw: 0 };
       if (req.query.select) {
         //create object of array { field: 1 }
@@ -143,7 +147,9 @@ router.get(
       return res.status(400).json({ message: 'Invalid search parameters' });
     }
     try {
-      const count = Number(req.query.count) || 10;
+      const count =
+        Number(req.query.count) ||
+        (await WikiTemplates.estimatedDocumentCount());
       let projection = { throw: 0 };
       if (req.query.select) {
         //create object of array { field: 1 }
