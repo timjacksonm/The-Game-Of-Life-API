@@ -125,6 +125,10 @@ router.get(
         req.params.id,
         projection
       );
+      response._doc.rleString = decode(
+        response._doc.rleString,
+        response._doc.size
+      );
       res.status(200).json(response);
     } catch (err) {
       debug(err);
