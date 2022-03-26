@@ -61,7 +61,7 @@ const validateAndSanitize = (method) => {
           .withMessage('Title must not be empty')
           .isString()
           .withMessage('Title is invalid. Must be a string')
-          .isAlphanumeric('en-US', { ignore: ' ' })
+          .isAlphanumeric('en-US', { ignore: ' .!' })
           .withMessage('Title is invalid. Must only contain letters')
           .trim()
           .custom((val) => CustomTemplates.isUniqueTitle(val))
