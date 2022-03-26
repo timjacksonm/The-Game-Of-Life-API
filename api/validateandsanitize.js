@@ -53,7 +53,7 @@ const validateAndSanitize = (method) => {
           .withMessage('Author must not be empty')
           .isString()
           .withMessage('Author is invalid. Must be a string')
-          .isAlphaWithSpace()
+          .isAlpha('en-US', { ignore: ' ' })
           .withMessage('Author is invalid. Must only contain letters')
           .trim(),
         body('title')
@@ -61,7 +61,7 @@ const validateAndSanitize = (method) => {
           .withMessage('Title must not be empty')
           .isString()
           .withMessage('Title is invalid. Must be a string')
-          .isAlphanumericWithSpace()
+          .isAlphanumeric('en-US', { ignore: ' ' })
           .withMessage('Title is invalid. Must only contain letters')
           .trim()
           .custom((val) => CustomTemplates.isUniqueTitle(val))
