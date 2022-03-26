@@ -210,4 +210,31 @@ router.post(
     }
   }
 );
+
+//**Post** delete a pattern in CustomTemplates db
+router.post(
+  '/customcollection/patterns/delete/:id?',
+  validateAndSanitize('byid'),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      debug('%j', errors);
+      return res.status(400).json({ message: errors });
+    }
+    try {
+      const found = await CustomTemplates.findById({ _id: req.query.id });
+      if (!found) {
+        res.status(404).json({ message: 'Pattern id not found.' });
+      } else {
+        const response = await CustomTemplates.findByIdAndDelete({
+          _id: req.query.id,
+        });
+        res.status(200).json(response._doc);
+      }
+    } catch (err) {
+      debug(err);
+      res.status(500).json({ message: err });
+    }
+  }
+);
 module.exports = router;
