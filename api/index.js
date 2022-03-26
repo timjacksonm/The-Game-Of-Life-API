@@ -219,7 +219,7 @@ router.delete(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       debug('%j', errors);
-      return res.status(400).json({ message: errors, test: 'test' });
+      return res.status(400).json({ message: errors });
     }
     try {
       const found = await CustomTemplates.findById({ _id: req.params.id });
