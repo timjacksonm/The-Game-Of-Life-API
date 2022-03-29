@@ -2,13 +2,15 @@
 
 ## Links:
 
+<a target="_blank" href="https://github.com/timjacksonm/The-Game-Of-Life">The Game Of Life Project</a>
+
 <a target="_blank" href="https://rapidapi.com/timjacksonm@gmail.com/api/the-game-of-life/">The Game Of Life API</a> RapidAPI Link.
 
 <a target="_blank" href="https://github.com/timjacksonm/rle-decoder">**rle-decoder**</a>
 
 ## Usage:
 
-Query up to 2,339 unique patterns that are well documented or save a new pattern to the database.
+Query up to 2,288 unique patterns that are well documented or save a new pattern to the database.
 
 API returns a JavaScript object that include the patterns Author, Title, Description, Size & Run length encoded string!
 
@@ -75,59 +77,61 @@ The below examples uses axios for request to the api.
   <summary>GET patterns from wikicollection</summary>
 
 Results are sorted by size small -> large
-  
+
 If parameters are omitted API will return 10 results by default.
-  
+
 Optional parameters **count** and **select** can be added to change query results.
 
 { count: Number } - if included returns the Number of results you want returned. from 1 to a max range of 2,339 patterns.
 
 { select: JSON String } - if included returns only the fields listed within the Array of Strings in JSON format. I.E. { select: '["author", "rleString"]' }
-fields you can include are _id, author, title, description, size, rleString, date
+fields you can include are \_id, author, title, description, size, rleString, date
 
 **Example Request**
-  
+
 ```javascript
-var axios = require("axios").default;
+var axios = require('axios').default;
 
 var options = {
   method: 'GET',
   url: 'https://the-game-of-life.p.rapidapi.com/wikicollection/patterns/',
   params: {
     select: '["author","title","description","size","rleString","date"]',
-    count: '1'
+    count: '1',
   },
   headers: {
     'x-rapidapi-host': 'the-game-of-life.p.rapidapi.com',
-    'x-rapidapi-key': 'Your API-Key Here'
-  }
+    'x-rapidapi-key': 'Your API-Key Here',
+  },
 };
 
-axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
+axios
+  .request(options)
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
 ```
-  
+
 **Example Response**
 
-  ```javascript
+```javascript
 {
-    "size": {
-        "x": 11,
-        "y": 11
-    },
-    "_id": "61de589cbec647f794843b51",
-    "author": "",
-    "title": "Scrubber with blocks",
-    "description": [],
-    "rleString": "4b2o$4b2o2$4b3o$3bo3bob2o$2obo3bob2o$2obo3bo$4b3o2$5b2o$5b2o!",
-    "date": "2022-01-12T04:27:08.057Z"
+  "size": {
+      "x": 11,
+      "y": 11
+  },
+  "_id": "61de589cbec647f794843b51",
+  "author": "",
+  "title": "Scrubber with blocks",
+  "description": [],
+  "rleString": "4b2o$4b2o2$4b3o$3bo3bob2o$2obo3bob2o$2obo3bo$4b3o2$5b2o$5b2o!",
+  "date": "2022-01-12T04:27:08.057Z"
 }
 ```
-  
-  
+
 </details>
 
 <details>
@@ -138,47 +142,52 @@ If parameters are omitted API will return result with all fields by default.
 Optional parameter **select** can be added to change query results.
 
 { select: JSON String } - if included returns only the fields listed within the Array of Strings in JSON format. I.E. { select: '["author", "rleString"]' }
-fields you can include are _id, author, title, description, size, rleString, date
+fields you can include are \_id, author, title, description, size, rleString, date
 
 **Example Request**
-  
+
 ```javascript
-var axios = require("axios").default;
+var axios = require('axios').default;
 
 var options = {
   method: 'GET',
   url: 'https://the-game-of-life.p.rapidapi.com/wikicollection/patterns/61de589bbec647f7948435ef',
-  params: {select: '["author","title","description","size","rleString","date"]'},
+  params: {
+    select: '["author","title","description","size","rleString","date"]',
+  },
   headers: {
     'x-rapidapi-host': 'the-game-of-life.p.rapidapi.com',
-    'x-rapidapi-key': 'Your API-Key Here'
-  }
+    'x-rapidapi-key': 'Your API-Key Here',
+  },
 };
 
-axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
+axios
+  .request(options)
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
 ```
-  
+
 **Example Response**
 
-  ```javascript
+```javascript
 {
-    "size": {
-        "x": 12,
-        "y": 5
-    },
-    "_id": "61de589bbec647f7948435ef",
-    "author": "Dean Hickerson",
-    "title": "Blom",
-    "description": [
-        "A methuselah with lifespan 23314 found in July 2002.",
-        "www.conwaylife.com/wiki/index.php?title=Blom"
-    ],
-    "rleString": "o10bo$b4o6bo$2b2o7bo$10bob$8bobo!",
-    "date": "2022-01-12T04:27:07.819Z"
+  "size": {
+      "x": 12,
+      "y": 5
+  },
+  "_id": "61de589bbec647f7948435ef",
+  "author": "Dean Hickerson",
+  "title": "Blom",
+  "description": [
+      "A methuselah with lifespan 23314 found in July 2002.",
+      "www.conwaylife.com/wiki/index.php?title=Blom"
+  ],
+  "rleString": "o10bo$b4o6bo$2b2o7bo$10bob$8bobo!",
+  "date": "2022-01-12T04:27:07.819Z"
 }
 ```
 
@@ -188,22 +197,22 @@ axios.request(options).then(function (response) {
   <summary>GET all wikicollection patterns by title or author search</summary>
 
 Required parameters: path which is the directory to filter. Can be title or author.
-  
+
 Required query: value which is the search query.
 
 If parameters are omitted API will return 10 results by default.
-  
+
 Optional parameters **count** and **select** can be added to change query results.
 
 { count: Number } - if included returns the Number of results you want returned. from 1 to a max range of 2,339 patterns.
 
 { select: JSON String } - if included returns only the fields listed within the Array of Strings in JSON format. I.E. { select: '["author", "rleString"]' }
-fields you can include are _id, author, title, description, size, rleString, date
+fields you can include are \_id, author, title, description, size, rleString, date
 
 **Example Request**
-  
+
 ```javascript
-var axios = require("axios").default;
+var axios = require('axios').default;
 
 var options = {
   method: 'GET',
@@ -211,144 +220,155 @@ var options = {
   params: {
     value: 'cloverleaf',
     select: '["author","title","description","size","rleString","date"]',
-    count: '1'
+    count: '1',
   },
   headers: {
     'x-rapidapi-host': 'the-game-of-life.p.rapidapi.com',
-    'x-rapidapi-key': 'Your API-Key Here'
-  }
+    'x-rapidapi-key': 'Your API-Key Here',
+  },
 };
 
-axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
+axios
+  .request(options)
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
 ```
-  
+
 **Example Response**
 
-  ```javascript
+```javascript
 [
-    {
-        "_id": "61de589bbec647f7948436e8",
-        "author": "Adam P. Goucher",
-        "title": "Cloverleaf interchange",
-        "description": [
-            "https://conwaylife.com/wiki/Cloverleaf_interchange",
-            "https://conwaylife.com/patterns/cloverleafinterchange.rle"
-        ],
-        "size": {
-            "x": 13,
-            "y": 13
-        },
-        "rleString": "4bo3bo$3bobobobo$3bobobobo$b2o2bobo2b2o$o4bobo4bo$b4o3b4o2$b4o3b4o$o4bobo4bo$b2o2bobo2b2o$3bobobobo$3bobobobo$4bo3bo!",
-        "date": "2022-01-12T04:27:07.876Z"
-    }
-]
+  {
+    _id: '61de589bbec647f7948436e8',
+    author: 'Adam P. Goucher',
+    title: 'Cloverleaf interchange',
+    description: [
+      'https://conwaylife.com/wiki/Cloverleaf_interchange',
+      'https://conwaylife.com/patterns/cloverleafinterchange.rle',
+    ],
+    size: {
+      x: 13,
+      y: 13,
+    },
+    rleString:
+      '4bo3bo$3bobobobo$3bobobobo$b2o2bobo2b2o$o4bobo4bo$b4o3b4o2$b4o3b4o$o4bobo4bo$b2o2bobo2b2o$3bobobobo$3bobobobo$4bo3bo!',
+    date: '2022-01-12T04:27:07.876Z',
+  },
+];
 ```
-  
+
 </details>
 
 <details>
   <summary>GET patterns from customcollection</summary>
 
-**Custom Collection contains patterns saved from my Game Of Life Application. May be few results.**  
-  
+**Custom Collection contains patterns saved from my Game Of Life Application. May be few results.**
+
 Results are sorted by size small -> large
-  
+
 If parameters are omitted API will return 10 results by default.
-  
+
 Optional parameters **count** and **select** can be added to change query results.
 
 { count: Number } - if included returns the Number of results you want returned. from 1 to a max range of 2,339 patterns.
 
 { select: JSON String } - if included returns only the fields listed within the Array of Strings in JSON format. I.E. { select: '["author", "rleString"]' }
-fields you can include are _id, author, title, description, size, rleString, date
+fields you can include are \_id, author, title, description, size, rleString, date
 
 **Example Request**
-  
+
 ```javascript
-var axios = require("axios").default;
+var axios = require('axios').default;
 
 var options = {
   method: 'GET',
   url: 'https://the-game-of-life.p.rapidapi.com/customcollection/patterns/',
   params: {
     select: '["author","title","description","size","rleString","date"]',
-    count: '1'
+    count: '1',
   },
   headers: {
     'x-rapidapi-host': 'the-game-of-life.p.rapidapi.com',
-    'x-rapidapi-key': 'Your API-Key Here'
-  }
+    'x-rapidapi-key': 'Your API-Key Here',
+  },
 };
 
-axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
-
+axios
+  .request(options)
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
 ```
-  
+
 **Example Response**
 
-  ```javascript
+```javascript
 [
-    {
-        "_id": "61e3651ab423cd99aee24876",
-        "author": "Tim",
-        "title": "epic pattern",
-        "description": [
-            "flys across the room in a crazy pattern you would not believe!"
-        ],
-        "size": {
-            "x": 3,
-            "y": 3
-        },
-        "rleString": "bo$2bo$3o!",
-        "date": "2022-01-16T00:21:46.698Z"
-    }
-]
+  {
+    _id: '61e3651ab423cd99aee24876',
+    author: 'Tim',
+    title: 'epic pattern',
+    description: [
+      'flys across the room in a crazy pattern you would not believe!',
+    ],
+    size: {
+      x: 3,
+      y: 3,
+    },
+    rleString: 'bo$2bo$3o!',
+    date: '2022-01-16T00:21:46.698Z',
+  },
+];
 ```
+
 </details>
 
 <details>
   <summary>GET customcollection pattern by :id</summary>
   
-**Custom Collection contains patterns saved from my Game Of Life Application. May be few results.**  
+**Custom Collection contains patterns saved from my Game Of Life Application. May be few results.**
 
 If parameters are omitted API will return result with all fields by default.
 
 Optional parameter **select** can be added to change query results.
 
 { select: JSON String } - if included returns only the fields listed within the Array of Strings in JSON format. I.E. { select: '["author", "rleString"]' }
-fields you can include are _id, author, title, description, size, rleString, date
+fields you can include are \_id, author, title, description, size, rleString, date
 
 **Example Request**
-  
+
 ```javascript
-var axios = require("axios").default;
+var axios = require('axios').default;
 
 var options = {
   method: 'GET',
   url: 'https://the-game-of-life.p.rapidapi.com/customcollection/patterns/61e3651ab423cd99aee24876',
-  params: {select: '["author","title","description","size","rleString","date"]'},
+  params: {
+    select: '["author","title","description","size","rleString","date"]',
+  },
   headers: {
     'x-rapidapi-host': 'the-game-of-life.p.rapidapi.com',
-    'x-rapidapi-key': 'Your API-Key Here'
-  }
+    'x-rapidapi-key': 'Your API-Key Here',
+  },
 };
 
-axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
-
+axios
+  .request(options)
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
 ```
-  
+
 **Example Response**
 
 ```javascript
@@ -368,7 +388,7 @@ axios.request(options).then(function (response) {
 }
 
 ```
-  
+
 </details>
 
 </details>
@@ -376,12 +396,10 @@ axios.request(options).then(function (response) {
 <details>
   <summary>POST save new pattern to customcollection</summary>
 
-
-
 **Example Request**
-  
+
 ```javascript
-var axios = require("axios").default;
+var axios = require('axios').default;
 
 var options = {
   method: 'POST',
@@ -389,24 +407,27 @@ var options = {
   headers: {
     'content-type': 'application/json',
     'x-rapidapi-host': 'the-game-of-life.p.rapidapi.com',
-    'x-rapidapi-key': 'Your API-Key Here'
+    'x-rapidapi-key': 'Your API-Key Here',
   },
   data: {
     author: 'Test',
     title: 'glider',
     description: ['default glider'],
-    size: {x: 3, y: 3},
-    rleString: 'bob$2bo$3o!'
-  }
+    size: { x: 3, y: 3 },
+    rleString: 'bob$2bo$3o!',
+  },
 };
 
-axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
+axios
+  .request(options)
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
 ```
-  
+
 **Example Successful Response Code 201**
 
 ```javascript
@@ -426,7 +447,7 @@ axios.request(options).then(function (response) {
     "__v": 0
 }
 ```
-  
+
 **Example Bad Request Response Code 400**
 
 ```javascript
@@ -443,7 +464,7 @@ axios.request(options).then(function (response) {
     }
 }
 ```
-  
+
 </details>
 
 ## Release
