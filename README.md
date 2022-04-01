@@ -4,7 +4,7 @@
 
 <a target="_blank" href="https://github.com/timjacksonm/The-Game-Of-Life">The Game Of Life Project</a>
 
-<a target="_blank" href="https://rapidapi.com/timjacksonm@gmail.com/api/the-game-of-life/">The Game Of Life API</a> RapidAPI Link.
+<a target="_blank" href="https://rapidapi.com/timjacksonm-1jw8F2hFW3d/api/the-game-of-life">The Game Of Life API</a> RapidAPI Link.
 
 <a target="_blank" href="https://github.com/timjacksonm/rle-decoder">**rle-decoder**</a>
 
@@ -22,7 +22,7 @@ The API allows you to subscribe and use up to 6 different endpoints to query dat
 
 Sign up / Sign in at <a target="_blank" href="https://rapidapi.com/">rapidapi.com</a>
 
-Navigate to API Hub and search The Game Of Life API or click <a target="_blank" href="https://rapidapi.com/timjacksonm@gmail.com/api/the-game-of-life/">here</a>.
+Navigate to API Hub and search The Game Of Life API or click <a target="_blank" href="https://rapidapi.com/timjacksonm-1jw8F2hFW3d/api/the-game-of-life">here</a>.
 
 Results returned from API are formatted with the below Schema.
 
