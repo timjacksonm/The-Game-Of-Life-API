@@ -1,6 +1,6 @@
 const { decode, fileParse } = require('rle-decoder');
 const { readdir } = require('fs/promises');
-var fs = require('fs');
+const fs = require('fs');
 const Template = require('./models/template.js');
 
 async function addFileToDB(file, folderPath) {
