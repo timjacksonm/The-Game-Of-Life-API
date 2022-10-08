@@ -13,32 +13,31 @@ router.get('/', async (req, res) => {
 
 //**GET** patterns from wikicollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
-  '/wikicollection/patterns/',
+  '/wikicollection/patterns',
   validateAndSanitize('list'),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      debug('%j', errors);
-      return res.status(400).json({ message: errors });
-    }
     try {
-      const count =
-        Number(req.query.count) ||
-        (await WikiTemplates.estimatedDocumentCount());
-      //throw is set for object if there is no selection in query. aggregate doesn't take an array of strings like findByID does for projection :(
+      const { limit = 100, select } = req.query;
       let projection = { throw: 0 };
-      if (req.query.select) {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        debug('%j', errors);
+        return res.status(400).json({ message: errors });
+      }
+
+      if (select) {
         //create object of array { field: 1 }
-        projection = JSON.parse(req.query.select).reduce(
+        projection = JSON.parse(select).reduce(
           (acc, curr) => ((acc[curr] = 1), acc),
           {}
         );
       }
 
       const response = await WikiTemplates.aggregate([
-        { $sample: { size: count } },
         { $sort: { 'size.x': 1, 'size.y': 1 } },
         { $project: projection },
+        { $limit: Number(limit) },
       ]);
       debug(response);
       res.status(200).json(response);
@@ -51,7 +50,7 @@ router.get(
 
 //**GET** patterns from customcollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
-  '/customcollection/patterns/',
+  '/customcollection/patterns',
   validateAndSanitize('list'),
   async (req, res) => {
     const errors = validationResult(req);
@@ -187,7 +186,7 @@ router.get(
 
 //**Post** save new pattern to CustomTemplates in db
 router.post(
-  '/customcollection/patterns/',
+  '/customcollection/patterns',
   validateAndSanitize('create'),
   async (req, res) => {
     const errors = validationResult(req);

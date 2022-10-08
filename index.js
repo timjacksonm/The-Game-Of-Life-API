@@ -1,6 +1,6 @@
 const express = require('express');
 const createError = require('http-errors');
-const router = require('./api/index');
+const router = require('./controllers/index');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
 const compression = require('compression');
