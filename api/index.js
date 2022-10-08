@@ -40,6 +40,7 @@ router.get(
         { $sort: { 'size.x': 1, 'size.y': 1 } },
         { $project: projection },
       ]);
+      debug(response);
       res.status(200).json(response);
     } catch (err) {
       debug(err);
