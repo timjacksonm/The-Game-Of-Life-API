@@ -19,7 +19,7 @@
     "express-validator": "^6.14.0",
     "helmet": "^6.0.0",
     "http-errors": "^2.0.0",
-    "mongoose": "^6.1.5",
+    "mongoose": "^6.6.5",
     "rle-decoder": "^1.0.1"
   },
   "devDependencies": {
