@@ -1,7 +1,7 @@
-const { query, check, body, param, checkSchema } = require('express-validator');
-const CustomTemplates = require('../models/customtemplate');
+import { query, check, body, param } from 'express-validator';
+import CustomTemplate from '../models/customtemplate';
 
-const validateAndSanitize = (method) => {
+export const validateAndSanitize = (method: string): any => {
   switch (method) {
     case 'list': {
       return [
@@ -64,23 +64,23 @@ const validateAndSanitize = (method) => {
           .isAlphanumeric('en-US', { ignore: ' .!' })
           .withMessage('Title is invalid. Must only contain letters')
           .trim()
-          .custom((val) => CustomTemplates.isUniqueTitle(val))
+          .custom((val: string) => CustomTemplate.isUniqueTitle(val))
           .withMessage('Title already in use'),
         body('description')
           .notEmpty()
           .withMessage('Description must not be empty')
           .isArray()
-          .withMessage('Description is invalid. Must be array')
-          .custom((arr) =>
-            arr.map((value) => {
-              if (value.substring()) {
-                return true;
-              } else {
-                throw new Error();
-              }
-            })
-          )
-          .withMessage('Description is invalid. Include only strings in array'),
+          .withMessage('Description is invalid. Must be array'),
+        // .custom((arr) =>
+        //   arr.map((value) => {
+        //     if (value.substring()) {
+        //       return true;
+        //     } else {
+        //       throw new Error();
+        //     }
+        //   })
+        // )
+        // .withMessage('Description is invalid. Include only strings in array'),
         body('size').isObject().withMessage('Size is invalid. Must be object'),
         body('size.x')
           .custom((value) => {
@@ -126,5 +126,3 @@ const validateAndSanitize = (method) => {
     }
   }
 };
-
-module.exports = { validateAndSanitize };
