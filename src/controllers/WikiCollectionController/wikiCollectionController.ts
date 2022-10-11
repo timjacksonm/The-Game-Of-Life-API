@@ -23,7 +23,6 @@ router.get(
       }
 
       const projection = select ? convertJSONToObject(select) : { throw: 0 };
-
       const response = await wikitemplate.aggregate([
         { $sort: { 'size.x': 1, 'size.y': 1 } },
         { $project: projection },
@@ -46,6 +45,7 @@ router.get(
       const { select } = req.query as unknown as IQuery;
       const { id } = req.params;
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(400).json({ message: errors });
@@ -72,6 +72,7 @@ router.get(
     try {
       const { value, limit = 100, select } = req.query as unknown as IQuery;
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(400).json({ message: errors });

@@ -16,6 +16,7 @@ router.get(
     try {
       const { limit = 100, select } = req.query as unknown as IQuery;
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(400).json({ message: errors });
@@ -45,6 +46,7 @@ router.get(
       const { select } = req.query as unknown as IQuery;
       const { id } = req.params;
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(400).json({ message: errors });
@@ -68,13 +70,15 @@ router.post(
   '/customcollection/patterns',
   validateAndSanitize('create'),
   async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      console.log(errors);
-      return res.status(400).json({ message: errors });
-    }
     try {
       const { author, title, description, size, rleString } = req.body;
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(400).json({ message: errors });
+      }
+
       const pattern = await customtemplate.create({
         author,
         title,
@@ -93,17 +97,18 @@ router.post(
 router.delete(
   '/customcollection/patterns/:id',
   async (req: Request, res: Response) => {
-    const { id } = req.params;
     try {
+      const { id } = req.params;
+
       const found = await customtemplate.findById({ _id: id });
       if (!found) {
         res.status(404).json({ message: 'Pattern id not found.' });
-      } else {
-        const response = await customtemplate.findByIdAndDelete({
-          _id: id,
-        });
-        res.status(200).json(response);
       }
+
+      const response = await customtemplate.findByIdAndDelete({
+        _id: id,
+      });
+      res.status(200).json(response);
     } catch (err) {
       res.status(500).json({ message: err });
     }
