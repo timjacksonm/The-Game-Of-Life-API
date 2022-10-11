@@ -2,6 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import compression from 'compression';
+import cors from 'cors';
+import morgan from 'morgan';
 import router from './controllers/home';
 import wikiRoutes from './controllers/WikiCollectionController';
 import customRoutes from './controllers/CustomCollectionController';
@@ -10,6 +12,10 @@ import {
   errorResponder,
   invalidPathHandler,
 } from './errorhandler';
+import debug from 'debug';
+const info = debug('info');
+const { SITE1, SITE2, SITE3, SITE4 } = process.env;
+const whitelist = [SITE1!, SITE2!, SITE3!, SITE4!];
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
@@ -19,6 +25,15 @@ const app = express();
 app.use(compression());
 
 app.use(helmet());
+
+app.use(
+  cors({
+    origin: whitelist,
+    methods: 'GET, POST, DELETE',
+  })
+);
+
+app.use(morgan('combined', { stream: { write: (msg) => info(msg) } }));
 
 //Set up mongoose connection
 const mongoose = require('mongoose');
