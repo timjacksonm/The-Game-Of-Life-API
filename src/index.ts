@@ -8,14 +8,14 @@ import router from './controllers/home';
 import wikiRoutes from './controllers/WikiCollectionController';
 import customRoutes from './controllers/CustomCollectionController';
 import {
+  error,
   errorLogger,
   errorResponder,
+  info,
   invalidPathHandler,
 } from './errorhandler';
-import debug from 'debug';
-const info = debug('info');
-const { SITE1, SITE2, SITE3, SITE4 } = process.env;
-const whitelist = [SITE1!, SITE2!, SITE3!, SITE4!];
+
+const whitelist = process.env.SITES?.split(', ');
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
@@ -33,6 +33,7 @@ app.use(
   })
 );
 
+//logs any incoming requests
 app.use(morgan('combined', { stream: { write: (msg) => info(msg) } }));
 
 //Set up mongoose connection
@@ -40,7 +41,10 @@ const mongoose = require('mongoose');
 const mongoDB = process.env.PROD_DB_URL || process.env.DEV_DB_URL;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.on('error', (err: { message: string }) =>
+  error('MongoDB connection error: ' + err.message)
+);
+db.on('connected', () => info('MongoDB connection established successfully'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -53,4 +57,6 @@ app.use(errorLogger);
 app.use(errorResponder);
 app.use(invalidPathHandler);
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () =>
+  info(`CORS-enabled web server listening on port ${PORT}`)
+);

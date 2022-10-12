@@ -4,6 +4,7 @@ import { convertJSONToObject } from '../../helpers';
 import { validateAndSanitize } from '../validateandsanitize';
 import { IQuery } from '../interfaces';
 import wikitemplate from '../../models/wikitemplate';
+import { logError } from '../home';
 const { decode } = require('rle-decoder');
 
 const router = express.Router();
@@ -18,7 +19,7 @@ router.get(
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log(errors);
+        logError(`Validation Error: ${JSON.stringify(errors)}`);
         return res.status(400).json({ message: errors });
       }
 
@@ -28,9 +29,15 @@ router.get(
         { $project: projection },
         { $limit: Number(limit) },
       ]);
-      console.log(response);
+
+      if (!response) {
+        logError(`NotFoundError: /wikicollection/patterns No patterns found`);
+        res.status(404).json({ message: 'No patterns found' });
+      }
+
       res.status(200).json(response);
-    } catch (err) {
+    } catch (err: any) {
+      logError(`Error: GET /wikicollection/patterns ${err.message}`);
       res.status(500).json({ message: err });
     }
   }
@@ -47,18 +54,24 @@ router.get(
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log(errors);
+        logError(`Validation Error: ${JSON.stringify(errors)}`);
         return res.status(400).json({ message: errors });
       }
 
       const projection = select ? convertJSONToObject(select) : { throw: 0 };
-      const response = await wikitemplate.findById(id, projection);
+      const found = await wikitemplate.findById(id, projection);
 
-      if (response) {
-        response.rleString = decode(response.rleString, response.size);
-        res.status(200).json(response);
+      if (!found) {
+        logError(`NotFoundError: wikicollection Pattern ${id}`);
+        res.status(404).json({ message: 'Pattern id not found.' });
       }
-    } catch (err) {
+
+      if (found) {
+        found.rleString = decode(found.rleString, found.size);
+        res.status(200).json(found);
+      }
+    } catch (err: any) {
+      logError(`Error: GET /wikicollection/patterns/:id ${err.message}`);
       res.status(500).json({ message: err });
     }
   }
@@ -74,11 +87,14 @@ router.get(
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log(errors);
+        logError(`Validation Error: ${JSON.stringify(errors)}`);
         return res.status(400).json({ message: errors });
       }
       if (!value) {
-        return res.status(400).json({ message: 'Invalid search parameters' });
+        logError(`Query Parameter Error: ${JSON.stringify(errors)}`);
+        return res
+          .status(400)
+          .json({ message: 'Invalid query for req.query.value' });
       }
 
       const projection = select ? convertJSONToObject(select) : { throw: 0 };
@@ -95,8 +111,10 @@ router.get(
         { $project: projection },
         { $limit: Number(limit) },
       ]);
+
       res.status(200).json(response);
-    } catch (err) {
+    } catch (err: any) {
+      logError(`Error: GET /wikicollection/search/:path ${err.message}`);
       res.status(500).json({ message: err });
     }
   }

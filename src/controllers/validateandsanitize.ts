@@ -5,14 +5,19 @@ export const validateAndSanitize = (method: string): any => {
   switch (method) {
     case 'list': {
       return [
-        query('count')
+        query('limit')
           .optional({ checkFalsy: true })
           .isInt({ min: 1, max: 2339 })
           .withMessage('Invalid value or not within range'),
         query('select')
           .optional({ checkFalsy: true })
           .isJSON()
-          .withMessage('Invalid JSON with selection'),
+          .withMessage('Invalid JSON with selection')
+          .custom(
+            (value) =>
+              !JSON.parse(value).some((string: string) => string === '')
+          )
+          .withMessage('Select value cannot be empty string'),
       ];
     }
     case 'byid': {
@@ -23,7 +28,12 @@ export const validateAndSanitize = (method: string): any => {
         query('select')
           .optional({ checkFalsy: true })
           .isJSON()
-          .withMessage('Invalid JSON with selection'),
+          .withMessage('Invalid JSON with selection')
+          .custom(
+            (value) =>
+              !JSON.parse(value).some((string: string) => string === '')
+          )
+          .withMessage('Select value cannot be empty string'),
       ];
     }
     case 'bysearch': {
@@ -39,8 +49,13 @@ export const validateAndSanitize = (method: string): any => {
         query('select')
           .optional({ checkFalsy: true })
           .isJSON()
-          .withMessage('Invalid JSON with selection'),
-        query('count')
+          .withMessage('Invalid JSON with selection')
+          .custom(
+            (value) =>
+              !JSON.parse(value).some((string: string) => string === '')
+          )
+          .withMessage('Select value cannot be empty string'),
+        query('limit')
           .optional({ checkFalsy: true })
           .isInt({ min: 1, max: 2339 })
           .withMessage('Invalid value or not within range'),
@@ -70,17 +85,17 @@ export const validateAndSanitize = (method: string): any => {
           .notEmpty()
           .withMessage('Description must not be empty')
           .isArray()
-          .withMessage('Description is invalid. Must be array'),
-        // .custom((arr) =>
-        //   arr.map((value) => {
-        //     if (value.substring()) {
-        //       return true;
-        //     } else {
-        //       throw new Error();
-        //     }
-        //   })
-        // )
-        // .withMessage('Description is invalid. Include only strings in array'),
+          .withMessage('Description is invalid. Must be array')
+          .custom((arr: string[]) =>
+            arr.map((value: string) => {
+              if (typeof value === 'string') {
+                return true;
+              } else {
+                throw new Error();
+              }
+            })
+          )
+          .withMessage('Description is invalid. Include only strings in array'),
         body('size').isObject().withMessage('Size is invalid. Must be object'),
         body('size.x')
           .custom((value) => {
