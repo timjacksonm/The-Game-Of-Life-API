@@ -1,10 +1,11 @@
 import express, { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { convertJSONToObject } from '../../helpers';
-import { validateAndSanitize } from '../validateandsanitize';
-import { IQuery } from '../interfaces';
+import { validateAndSanitize } from '../../utils/validateandsanitize';
+import { IQuery } from '../../utils/interfaces';
 import wikitemplate from '../../models/wikitemplate';
-import { logError } from '../home';
+import { logError } from '../../utils/loggers';
+import { auth } from '../../utils/authcheck';
 const { decode } = require('rle-decoder');
 
 const router = express.Router();
@@ -12,8 +13,9 @@ const router = express.Router();
 //**GET** patterns from wikicollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
   '/wikicollection/patterns',
+  auth,
   validateAndSanitize('list'),
-  async (req: Request<{}, {}, {}, IQuery>, res: Response) => {
+  async (req: Request, res: Response) => {
     try {
       const { limit = 100, select } = req.query as unknown as IQuery;
       const errors = validationResult(req);
@@ -46,6 +48,7 @@ router.get(
 //**GET** wikicollection pattern by :id -- options { select: JSON Array }
 router.get(
   '/wikicollection/patterns/:id',
+  auth,
   validateAndSanitize('byid'),
   async (req: Request, res: Response) => {
     try {
@@ -80,6 +83,7 @@ router.get(
 //**GET** all wikicollection patterns by search -- options { select: JSON Array, count: num }
 router.get(
   '/wikicollection/search/:path',
+  auth,
   validateAndSanitize('bysearch'),
   async (req: Request, res: Response) => {
     try {

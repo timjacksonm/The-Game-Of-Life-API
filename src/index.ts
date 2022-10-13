@@ -34,7 +34,7 @@ app.use(
 );
 
 //logs any incoming requests
-app.use(morgan('combined', { stream: { write: (msg) => info(msg) } }));
+app.use(morgan('dev', { stream: { write: (msg) => info(msg) } }));
 
 //Set up mongoose connection
 const mongoose = require('mongoose');
