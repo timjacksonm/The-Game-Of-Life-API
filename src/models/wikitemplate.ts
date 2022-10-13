@@ -22,7 +22,7 @@ const TemplateSchema = new Schema<ITemplate>({
     trim: true,
   },
   description: {
-    type: [Array],
+    type: [String],
   },
   size: {
     x: { type: Number, required: true },
