@@ -1,4 +1,5 @@
 import { query, check, body, param } from 'express-validator';
+import mongoose from 'mongoose';
 import CustomTemplate from '../models/customtemplate';
 
 export const validateAndSanitize = (method: string): any => {
@@ -24,7 +25,9 @@ export const validateAndSanitize = (method: string): any => {
       return [
         check('id')
           .isLength({ min: 24, max: 24 })
-          .withMessage('Id must be a length of 24'),
+          .withMessage('Id must be a length of 24')
+          .custom((value) => mongoose.isValidObjectId(value))
+          .withMessage('Invalid ID, must be a 12-byte ObjectId to be valid.'),
         query('select')
           .optional({ checkFalsy: true })
           .isJSON()

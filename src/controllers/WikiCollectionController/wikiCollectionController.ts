@@ -18,6 +18,7 @@ router.get(
   async (req: Request, res: Response) => {
     try {
       const { limit = 100, select } = req.query as unknown as IQuery;
+      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -25,7 +26,6 @@ router.get(
         return res.status(400).json({ message: errors });
       }
 
-      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const response = await wikitemplate.aggregate([
         { $sort: { 'size.x': 1, 'size.y': 1 } },
         { $project: projection },
@@ -54,6 +54,7 @@ router.get(
     try {
       const { select } = req.query as unknown as IQuery;
       const { id } = req.params;
+      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -61,7 +62,6 @@ router.get(
         return res.status(400).json({ message: errors });
       }
 
-      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const found = await wikitemplate.findById(id, projection);
 
       if (!found) {
@@ -70,8 +70,8 @@ router.get(
       }
 
       if (found) {
-        found.rleString = decode(found.rleString, found.size);
-        res.status(200).json(found);
+        const decodedString = decode(found.rleString, found.size);
+        res.status(200).json({ ...found.toObject(), rleString: decodedString });
       }
     } catch (err: any) {
       logError(`Error: GET /wikicollection/patterns/:id ${err.message}`);
@@ -88,6 +88,7 @@ router.get(
   async (req: Request, res: Response) => {
     try {
       const { value, limit = 100, select } = req.query as unknown as IQuery;
+      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -101,7 +102,6 @@ router.get(
           .json({ message: 'Invalid query for req.query.value' });
       }
 
-      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const response = await wikitemplate.aggregate([
         {
           $search: {

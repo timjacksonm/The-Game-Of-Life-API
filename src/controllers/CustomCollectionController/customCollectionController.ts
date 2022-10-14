@@ -18,14 +18,13 @@ router.get(
   async (req: Request, res: Response) => {
     try {
       const { limit = 100, select } = req.query as unknown as IQuery;
+      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
         logError(`Validation Error: ${JSON.stringify(errors)}`);
         return res.status(400).json({ message: errors });
       }
-
-      const projection = select ? convertJSONToObject(select) : { throw: 0 };
 
       const response = await customtemplate.aggregate([
         { $sort: { 'size.x': 1, 'size.y': 1 } },
@@ -55,6 +54,7 @@ router.get(
     try {
       const { select } = req.query as unknown as IQuery;
       const { id } = req.params;
+      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -62,7 +62,6 @@ router.get(
         return res.status(400).json({ message: errors });
       }
 
-      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const found = await customtemplate.findById(id, projection);
 
       if (!found) {
@@ -71,9 +70,10 @@ router.get(
       }
 
       if (found) {
-        found.rleString = decode(found.rleString, found.size);
-        res.status(200).json(found);
+        const decodedString = decode(found.rleString, found.size);
+        res.status(200).json({ ...found.toObject(), rleString: decodedString });
       }
+      res.status(400).send();
     } catch (err: any) {
       logError(`Error: GET /customcollection/patterns/:id ${err.message}`);
       res.status(500).json({ message: err });
