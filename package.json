@@ -30,7 +30,7 @@
     "@types/compression": "^1.7.2",
     "@types/cors": "^2.8.12",
     "@types/debug": "^4.1.7",
-    "@types/express": "^4.17.14",
+    "@types/express": "^4.17.15",
     "@types/express-validator": "^3.0.0",
     "@types/http-errors": "^2.0.1",
     "@types/mongodb": "^4.0.7",
