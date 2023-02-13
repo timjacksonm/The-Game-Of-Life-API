@@ -21,7 +21,7 @@
     "express-validator": "^6.14.2",
     "helmet": "^6.0.1",
     "http-errors": "^2.0.0",
-    "mongoose": "^6.8.0",
+    "mongoose": "^6.9.1",
     "morgan": "^1.10.0",
     "rle-decoder": "^1.0.1",
     "ts-node": "^10.9.1"
