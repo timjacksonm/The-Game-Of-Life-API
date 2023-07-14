@@ -1,20 +1,19 @@
-import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import { convertJSONToObject } from '../../helpers';
-import { validateAndSanitize } from '../../utils/validateandsanitize';
-import { IQuery } from '../../utils/interfaces';
-import wikitemplate from '../../models/wikitemplate';
-import { logError } from '../../utils/loggers';
-import { auth } from '../../utils/authcheck';
-const { decode } = require('rle-decoder');
+import express, { Request, Response } from "express";
+import { validationResult } from "express-validator";
+import { convertJSONToObject } from "../../helpers";
+import { validateAndSanitize } from "../../utils/validateandsanitize";
+import { IQuery } from "../../utils/interfaces";
+import wikitemplate from "../../models/wikitemplate";
+import { logError } from "../../utils/loggers";
+import { auth } from "../../utils/authcheck";
 
 const router = express.Router();
 
 //**GET** patterns from wikicollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
-  '/wikicollection/patterns',
+  "/wikicollection/patterns",
   auth,
-  validateAndSanitize('list'),
+  validateAndSanitize("list"),
   async (req: Request, res: Response) => {
     try {
       const { limit = 100, select } = req.query as unknown as IQuery;
@@ -27,14 +26,14 @@ router.get(
       }
 
       const response = await wikitemplate.aggregate([
-        { $sort: { 'size.x': 1, 'size.y': 1 } },
+        { $sort: { "size.x": 1, "size.y": 1 } },
         { $project: projection },
         { $limit: Number(limit) },
       ]);
 
       if (!response) {
         logError(`NotFoundError: /wikicollection/patterns No patterns found`);
-        res.status(404).json({ message: 'No patterns found' });
+        res.status(404).json({ message: "No patterns found" });
       }
 
       res.status(200).json(response);
@@ -47,9 +46,9 @@ router.get(
 
 //**GET** wikicollection pattern by :id -- options { select: JSON Array }
 router.get(
-  '/wikicollection/patterns/:id',
+  "/wikicollection/patterns/:id",
   auth,
-  validateAndSanitize('byid'),
+  validateAndSanitize("byid"),
   async (req: Request, res: Response) => {
     try {
       const { select } = req.query as unknown as IQuery;
@@ -66,12 +65,13 @@ router.get(
 
       if (!found) {
         logError(`NotFoundError: wikicollection Pattern ${id}`);
-        res.status(404).json({ message: 'Pattern id not found.' });
+        res.status(404).json({ message: "Pattern id not found." });
       }
 
       if (found) {
-        const decodedString = decode(found.rleString, found.size);
-        res.status(200).json({ ...found.toObject(), rleString: decodedString });
+        res
+          .status(200)
+          .json({ ...found.toObject(), rleString: found.rleString });
       }
     } catch (err: any) {
       logError(`Error: GET /wikicollection/patterns/:id ${err.message}`);
@@ -82,9 +82,9 @@ router.get(
 
 //**GET** all wikicollection patterns by search -- options { select: JSON Array, count: num }
 router.get(
-  '/wikicollection/search/:path',
+  "/wikicollection/search/:path",
   auth,
-  validateAndSanitize('bysearch'),
+  validateAndSanitize("bysearch"),
   async (req: Request, res: Response) => {
     try {
       const { value, limit = 100, select } = req.query as unknown as IQuery;
@@ -99,13 +99,13 @@ router.get(
         logError(`Query Parameter Error: ${JSON.stringify(errors)}`);
         return res
           .status(400)
-          .json({ message: 'Invalid query for req.query.value' });
+          .json({ message: "Invalid query for req.query.value" });
       }
 
       const response = await wikitemplate.aggregate([
         {
           $search: {
-            index: 'custom',
+            index: "custom",
             text: {
               query: value,
               path: req.params.path,

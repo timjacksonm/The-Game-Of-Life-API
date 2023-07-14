@@ -1,20 +1,19 @@
-import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import { convertJSONToObject } from '../../helpers';
-import { validateAndSanitize } from '../../utils/validateandsanitize';
-import customtemplate from '../../models/customtemplate';
-import { IQuery } from '../../utils/interfaces';
-import { logError } from '../../utils/loggers';
-import { auth } from '../../utils/authcheck';
-const { decode } = require('rle-decoder');
+import express, { Request, Response } from "express";
+import { validationResult } from "express-validator";
+import { convertJSONToObject } from "../../helpers";
+import { validateAndSanitize } from "../../utils/validateandsanitize";
+import customtemplate from "../../models/customtemplate";
+import { IQuery } from "../../utils/interfaces";
+import { logError } from "../../utils/loggers";
+import { auth } from "../../utils/authcheck";
 
 const router = express.Router();
 
 //**GET** patterns from customcollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
-  '/customcollection/patterns',
+  "/customcollection/patterns",
   auth,
-  validateAndSanitize('list'),
+  validateAndSanitize("list"),
   async (req: Request, res: Response) => {
     try {
       const { limit = 100, select } = req.query as unknown as IQuery;
@@ -27,14 +26,14 @@ router.get(
       }
 
       const response = await customtemplate.aggregate([
-        { $sort: { 'size.x': 1, 'size.y': 1 } },
+        { $sort: { "size.x": 1, "size.y": 1 } },
         { $project: projection },
         { $limit: Number(limit) },
       ]);
 
       if (!response) {
         logError(`NotFoundError: /customcollection/patterns No patterns found`);
-        res.status(404).json({ message: 'No patterns found' });
+        res.status(404).json({ message: "No patterns found" });
       }
 
       res.status(200).json(response);
@@ -47,9 +46,9 @@ router.get(
 
 //**GET** customcollection pattern by :id -- options { select: JSON Array }
 router.get(
-  '/customcollection/patterns/:id',
+  "/customcollection/patterns/:id",
   auth,
-  validateAndSanitize('byid'),
+  validateAndSanitize("byid"),
   async (req: Request, res: Response) => {
     try {
       const { select } = req.query as unknown as IQuery;
@@ -66,12 +65,11 @@ router.get(
 
       if (!found) {
         logError(`NotFoundError: customcollection Pattern ${id}`);
-        res.status(404).json({ message: 'Pattern id not found.' });
+        res.status(404).json({ message: "Pattern id not found." });
       }
 
       if (found) {
-        const decodedString = decode(found.rleString, found.size);
-        res.status(200).json({ ...found.toObject(), rleString: decodedString });
+        res.status(200).json({ ...found.toObject(), rleString: found });
       }
       res.status(400).send();
     } catch (err: any) {
@@ -83,9 +81,9 @@ router.get(
 // TODO: refactor POST/DELETE routes
 //**Post** save new pattern to CustomTemplates in db
 router.post(
-  '/customcollection/patterns',
+  "/customcollection/patterns",
   auth,
-  validateAndSanitize('create'),
+  validateAndSanitize("create"),
   async (req: Request, res: Response) => {
     try {
       const { author, title, description, size, rleString } = req.body;
@@ -114,7 +112,7 @@ router.post(
 
 //**Post** delete a pattern in CustomTemplates db
 router.delete(
-  '/customcollection/patterns/:id',
+  "/customcollection/patterns/:id",
   auth,
   async (req: Request, res: Response) => {
     try {
@@ -123,7 +121,7 @@ router.delete(
       const found = await customtemplate.findById({ _id: id });
       if (!found) {
         logError(`NotFoundError: Pattern ${id}`);
-        res.status(404).json({ message: 'Pattern id not found.' });
+        res.status(404).json({ message: "Pattern id not found." });
       }
 
       const deleted = await customtemplate.findByIdAndDelete({

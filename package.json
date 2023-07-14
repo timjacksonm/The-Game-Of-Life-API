@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
-    "devstart": "DEBUG=app:*,routes:* nodemon src/index.ts"
+    "devstart": "set DEBUG=app:*,routes:* && nodemon src/index.ts"
   },
   "dependencies": {
     "compression": "^1.7.4",
@@ -23,7 +23,6 @@
     "http-errors": "^2.0.0",
     "mongoose": "^6.8.0",
     "morgan": "^1.10.0",
-    "rle-decoder": "^1.0.1",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
