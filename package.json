@@ -2,7 +2,7 @@
   "name": "the-game-of-life-api",
   "version": "1.0.0",
   "engines": {
-    "node": "16.13.1"
+    "node": "18.x"
   },
   "description": "A REST api for requesting json templates for Conway's Game Of Life.",
   "author": "timjacksonm",
@@ -13,6 +13,7 @@
     "devstart": "set DEBUG=app:*,routes:* && nodemon src/index.ts"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "debug": "^4.3.4",
@@ -21,7 +22,7 @@
     "express-validator": "^6.14.2",
     "helmet": "^6.0.1",
     "http-errors": "^2.0.0",
-    "mongoose": "^6.8.0",
+    "mongoose": "7.4.0",
     "morgan": "^1.10.0",
     "ts-node": "^10.9.1"
   },

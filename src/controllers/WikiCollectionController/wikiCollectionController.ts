@@ -5,14 +5,12 @@ import { validateAndSanitize } from "../../utils/validateandsanitize";
 import { IQuery } from "../../utils/interfaces";
 import wikitemplate from "../../models/wikitemplate";
 import { logError } from "../../utils/loggers";
-import { auth } from "../../utils/authcheck";
 
 const router = express.Router();
 
 //**GET** patterns from wikicollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
   "/wikicollection/patterns",
-  auth,
   validateAndSanitize("list"),
   async (req: Request, res: Response) => {
     try {
@@ -47,7 +45,6 @@ router.get(
 //**GET** wikicollection pattern by :id -- options { select: JSON Array }
 router.get(
   "/wikicollection/patterns/:id",
-  auth,
   validateAndSanitize("byid"),
   async (req: Request, res: Response) => {
     try {
@@ -83,7 +80,6 @@ router.get(
 //**GET** all wikicollection patterns by search -- options { select: JSON Array, count: num }
 router.get(
   "/wikicollection/search/:path",
-  auth,
   validateAndSanitize("bysearch"),
   async (req: Request, res: Response) => {
     try {

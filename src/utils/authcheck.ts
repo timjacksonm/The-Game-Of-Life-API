@@ -1,19 +1,32 @@
 import { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
+import ApiKey from "../models/apikey.model";
 dotenv.config();
 
-export const auth = (req: Request, res: Response, next: NextFunction) => {
-  // disabled since no longer hosted on rapidapi
-  // const { RAPID_API_KEY } = process.env;
-  // if (!req.header('X-RapidAPI-Proxy-Secret')) {
-  //   return res.status(401).json({
-  //     message: 'Invalid request. Must include X-RapidAPI-Proxy-Secret Header',
-  //   });
-  // }
+export const authcheck = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.header("apikey")) {
+    return res.status(401).json({
+      message: "Invalid request. Must include apikey header",
+    });
+  }
+  const apikey = await ApiKey.findOne({
+    apiKey: req.header("apikey"),
+    environment: process.env.NODE_ENV,
+    isActive: true,
+    expiresAt: { $gte: new Date() },
+  });
 
-  // if (req.header('X-RapidAPI-Proxy-Secret') !== RAPID_API_KEY) {
-  //   return res.status(401).json({ message: 'Invalid API Key' });
-  // }
+  console.log(apikey);
+
+  if (!apikey) {
+    return res.status(401).json({
+      message: "Invalid apikey",
+    });
+  }
 
   next();
 };

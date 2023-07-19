@@ -5,14 +5,12 @@ import { validateAndSanitize } from "../../utils/validateandsanitize";
 import customtemplate from "../../models/customtemplate";
 import { IQuery } from "../../utils/interfaces";
 import { logError } from "../../utils/loggers";
-import { auth } from "../../utils/authcheck";
 
 const router = express.Router();
 
 //**GET** patterns from customcollection sorted small -> large -- options { select: JSON Array, count: num }
 router.get(
   "/customcollection/patterns",
-  auth,
   validateAndSanitize("list"),
   async (req: Request, res: Response) => {
     try {
@@ -47,7 +45,6 @@ router.get(
 //**GET** customcollection pattern by :id -- options { select: JSON Array }
 router.get(
   "/customcollection/patterns/:id",
-  auth,
   validateAndSanitize("byid"),
   async (req: Request, res: Response) => {
     try {
@@ -82,7 +79,6 @@ router.get(
 //**Post** save new pattern to CustomTemplates in db
 router.post(
   "/customcollection/patterns",
-  auth,
   validateAndSanitize("create"),
   async (req: Request, res: Response) => {
     try {
@@ -113,7 +109,6 @@ router.post(
 //**Post** delete a pattern in CustomTemplates db
 router.delete(
   "/customcollection/patterns/:id",
-  auth,
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
