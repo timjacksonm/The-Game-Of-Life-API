@@ -1,106 +1,106 @@
-import { query, check, body, param } from 'express-validator';
-import mongoose from 'mongoose';
-import CustomTemplate from '../models/customtemplate';
+import { query, check, body, param } from "express-validator";
+import mongoose from "mongoose";
+import CustomTemplate from "../models/customtemplate";
 
 export const validateAndSanitize = (method: string): any => {
   switch (method) {
-    case 'list': {
+    case "list": {
       return [
-        query('limit')
+        query("limit")
           .optional({ checkFalsy: true })
           .isInt({ min: 1, max: 2339 })
-          .withMessage('Invalid value or not within range'),
-        query('select')
+          .withMessage("Invalid value or not within range"),
+        query("select")
           .optional({ checkFalsy: true })
           .isJSON()
-          .withMessage('Invalid JSON with selection')
+          .withMessage("Invalid JSON with selection")
           .custom(
             (value) =>
-              !JSON.parse(value).some((string: string) => string === '')
+              !JSON.parse(value).some((string: string) => string === "")
           )
-          .withMessage('Select value cannot be empty string'),
+          .withMessage("Select value cannot be empty string"),
       ];
     }
-    case 'byid': {
+    case "byid": {
       return [
-        check('id')
+        check("id")
           .isLength({ min: 24, max: 24 })
-          .withMessage('Id must be a length of 24')
+          .withMessage("Id must be a length of 24")
           .custom((value) => mongoose.isValidObjectId(value))
-          .withMessage('Invalid ID, must be a 12-byte ObjectId to be valid.'),
-        query('select')
+          .withMessage("Invalid ID, must be a 12-byte ObjectId to be valid."),
+        query("select")
           .optional({ checkFalsy: true })
           .isJSON()
-          .withMessage('Invalid JSON with selection')
+          .withMessage("Invalid JSON with selection")
           .custom(
             (value) =>
-              !JSON.parse(value).some((string: string) => string === '')
+              !JSON.parse(value).some((string: string) => string === "")
           )
-          .withMessage('Select value cannot be empty string'),
+          .withMessage("Select value cannot be empty string"),
       ];
     }
-    case 'bysearch': {
+    case "bysearch": {
       return [
-        param('path')
+        param("path")
           .trim()
           .custom((value) => !/\s/.test(value))
-          .withMessage('1 word limit')
+          .withMessage("1 word limit")
           .custom((value) =>
-            ['author', 'title'].some((string) => string === value)
+            ["author", "title"].some((string) => string === value)
           )
-          .withMessage('Invalid path parameter'),
-        query('select')
+          .withMessage("Invalid path parameter"),
+        query("select")
           .optional({ checkFalsy: true })
           .isJSON()
-          .withMessage('Invalid JSON with selection')
+          .withMessage("Invalid JSON with selection")
           .custom(
             (value) =>
-              !JSON.parse(value).some((string: string) => string === '')
+              !JSON.parse(value).some((string: string) => string === "")
           )
-          .withMessage('Select value cannot be empty string'),
-        query('limit')
+          .withMessage("Select value cannot be empty string"),
+        query("limit")
           .optional({ checkFalsy: true })
           .isInt({ min: 1, max: 2339 })
-          .withMessage('Invalid value or not within range'),
+          .withMessage("Invalid value or not within range"),
       ];
     }
-    case 'create': {
+    case "create": {
       return [
-        body('author')
+        body("author")
           .notEmpty()
-          .withMessage('Author must not be empty')
+          .withMessage("Author must not be empty")
           .isString()
-          .withMessage('Author is invalid. Must be a string')
-          .isAlpha('en-US', { ignore: ' ' })
-          .withMessage('Author is invalid. Must only contain letters')
+          .withMessage("Author is invalid. Must be a string")
+          .isAlpha("en-US", { ignore: " " })
+          .withMessage("Author is invalid. Must only contain letters")
           .trim(),
-        body('title')
+        body("title")
           .notEmpty()
-          .withMessage('Title must not be empty')
+          .withMessage("Title must not be empty")
           .isString()
-          .withMessage('Title is invalid. Must be a string')
-          .isAlphanumeric('en-US', { ignore: ' .!' })
-          .withMessage('Title is invalid. Must only contain letters')
+          .withMessage("Title is invalid. Must be a string")
+          .isAlphanumeric("en-US", { ignore: " .!" })
+          .withMessage("Title is invalid. Must only contain letters")
           .trim()
           .custom((val: string) => CustomTemplate.isUniqueTitle(val))
-          .withMessage('Title already in use'),
-        body('description')
+          .withMessage("Title already in use"),
+        body("description")
           .notEmpty()
-          .withMessage('Description must not be empty')
+          .withMessage("Description must not be empty")
           .isArray()
-          .withMessage('Description is invalid. Must be array')
+          .withMessage("Description is invalid. Must be array")
           .custom((arr: string[]) =>
             arr.map((value: string) => {
-              if (typeof value === 'string') {
+              if (typeof value === "string") {
                 return true;
               } else {
                 throw new Error();
               }
             })
           )
-          .withMessage('Description is invalid. Include only strings in array'),
-        body('size').isObject().withMessage('Size is invalid. Must be object'),
-        body('size.x')
+          .withMessage("Description is invalid. Include only strings in array"),
+        body("size").isObject().withMessage("Size is invalid. Must be object"),
+        body("size.x")
           .custom((value) => {
             if (value.toFixed()) {
               return true;
@@ -109,9 +109,9 @@ export const validateAndSanitize = (method: string): any => {
             }
           })
           .withMessage(
-            'Size is invalid. For each key the value must be a number'
+            "Size is invalid. For each key the value must be a number"
           ),
-        body('size.y')
+        body("size.y")
           .custom((value) => {
             if (value.toFixed()) {
               return true;
@@ -120,14 +120,14 @@ export const validateAndSanitize = (method: string): any => {
             }
           })
           .withMessage(
-            'Size is invalid. For each key the value must be a number'
+            "Size is invalid. For each key the value must be a number"
           ),
-        body('rleString')
+        body("rleString")
           .trim()
           .notEmpty()
-          .withMessage('rleString must not be empty')
+          .withMessage("rleString must not be empty")
           .custom((value) => !/\s/.test(value))
-          .withMessage('Invalid rle string. Can\t contain spaces')
+          .withMessage("Invalid rle string. Can\t contain spaces")
           .custom((string) => {
             if (
               /[AaC-Nc-nP-Zp-z\@\_\#\%\^\&\*\(\)\+\=\-\[\]\{\}\;\:\'\"\,\<\.\>\/\?\`\~]/g.test(
@@ -139,7 +139,7 @@ export const validateAndSanitize = (method: string): any => {
               return true;
             }
           })
-          .withMessage('Invalid characters in rle string.'),
+          .withMessage("Invalid characters in rle string."),
       ];
     }
   }
