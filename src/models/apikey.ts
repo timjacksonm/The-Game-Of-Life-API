@@ -26,7 +26,6 @@ const apiKeySchema = new Schema({
   },
   expiresAt: {
     type: Date,
-    required: true,
   },
   environment: {
     type: String,
