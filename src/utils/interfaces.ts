@@ -1,5 +1,6 @@
 export interface IQuery extends Request {
   select: string;
-  limit: number;
+  offset?: number;
+  limit?: number;
   value?: string;
 }

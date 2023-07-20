@@ -14,7 +14,11 @@ router.get(
   validateAndSanitize("list"),
   async (req: Request, res: Response) => {
     try {
-      const { limit = 100, select } = req.query as unknown as IQuery;
+      const {
+        offset = 0,
+        limit = 100,
+        select,
+      } = req.query as unknown as IQuery;
       const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
@@ -24,9 +28,10 @@ router.get(
       }
 
       const response = await customtemplate.aggregate([
-        { $sort: { "size.x": 1, "size.y": 1 } },
-        { $project: projection },
+        { $sort: { "size.x": 1, "size.y": 1, title: 1 } },
+        { $skip: Number(offset) },
         { $limit: Number(limit) },
+        { $project: projection },
       ]);
 
       if (!response) {
@@ -75,7 +80,7 @@ router.get(
     }
   }
 );
-// TODO: refactor POST/DELETE routes
+
 //**Post** save new pattern to CustomTemplates in db
 router.post(
   "/customcollection/patterns",

@@ -3,8 +3,8 @@ import { validationResult } from "express-validator";
 import { convertJSONToObject } from "../../helpers";
 import { validateAndSanitize } from "../../utils/validateandsanitize";
 import { IQuery } from "../../utils/interfaces";
-import wikitemplate from "../../models/wikitemplate";
 import { logError } from "../../utils/loggers";
+import wikitemplate from "../../models/wikitemplate";
 
 const router = express.Router();
 
@@ -14,7 +14,11 @@ router.get(
   validateAndSanitize("list"),
   async (req: Request, res: Response) => {
     try {
-      const { limit = 100, select } = req.query as unknown as IQuery;
+      const {
+        offset = 0,
+        limit = 100,
+        select,
+      } = req.query as unknown as IQuery;
       const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
@@ -24,9 +28,10 @@ router.get(
       }
 
       const response = await wikitemplate.aggregate([
-        { $sort: { "size.x": 1, "size.y": 1 } },
-        { $project: projection },
+        { $sort: { "size.x": 1, "size.y": 1, title: 1 } },
+        { $skip: Number(offset) },
         { $limit: Number(limit) },
+        { $project: projection },
       ]);
 
       if (!response) {
@@ -83,7 +88,12 @@ router.get(
   validateAndSanitize("bysearch"),
   async (req: Request, res: Response) => {
     try {
-      const { value, limit = 100, select } = req.query as unknown as IQuery;
+      const {
+        value,
+        offset = 0,
+        limit = 100,
+        select,
+      } = req.query as unknown as IQuery;
       const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
@@ -108,8 +118,10 @@ router.get(
             },
           },
         },
-        { $project: projection },
+        { $sort: { "size.x": 1, "size.y": 1, title: 1 } },
+        { $skip: Number(offset) },
         { $limit: Number(limit) },
+        { $project: projection },
       ]);
 
       res.status(200).json(response);

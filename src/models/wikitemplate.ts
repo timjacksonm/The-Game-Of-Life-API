@@ -1,6 +1,6 @@
-import { Document, Model, model, Schema } from 'mongoose';
+import mongoose, { Document, Model, model, Schema } from "mongoose";
 
-interface ITemplate extends Document {
+interface IWikiTemplate extends Document {
   author: string;
   title: string;
   description: string[];
@@ -9,10 +9,11 @@ interface ITemplate extends Document {
     y: number;
   };
   rleString: string;
-  date: Date;
+  createdAt: Date;
+  modifiedAt: Date;
 }
 
-const TemplateSchema = new Schema<ITemplate>({
+const wikiTemplateSchema = new Schema({
   author: {
     type: String,
     trim: true,
@@ -32,8 +33,11 @@ const TemplateSchema = new Schema<ITemplate>({
     type: String,
     required: true,
   },
-  date: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now },
+  modifiedAt: { type: Date, default: Date.now },
 });
 
-const Template = model<ITemplate>('WikiTemplates', TemplateSchema);
-export default Template;
+export default mongoose.model<IWikiTemplate>(
+  "WikiTemplate",
+  wikiTemplateSchema
+);
