@@ -4,7 +4,7 @@
   "engines": {
     "node": "18.x"
   },
-  "description": "A REST api for requesting json templates for Conway's Game Of Life.",
+  "description": "A REST api for Conway's Game Of Life patterns.",
   "author": "timjacksonm",
   "license": "ISC",
   "scripts": {
