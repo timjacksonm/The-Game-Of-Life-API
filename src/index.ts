@@ -19,6 +19,7 @@ import {
 import { authcheck } from "./utils/authcheck";
 
 const whitelist = process.env.SITES?.split(", ");
+info(whitelist);
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
