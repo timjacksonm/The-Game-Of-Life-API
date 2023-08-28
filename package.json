@@ -35,7 +35,7 @@
     "@types/express-validator": "^3.0.0",
     "@types/http-errors": "^2.0.1",
     "@types/mongodb": "^4.0.7",
-    "@types/morgan": "^1.9.3",
+    "@types/morgan": "^1.9.5",
     "nodemon": "^3.0.1"
   }
 }
