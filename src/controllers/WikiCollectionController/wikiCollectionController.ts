@@ -54,14 +54,9 @@ router.get(
 
       const resultsStage = [{ $skip: offset }, { $limit: limit }];
 
-      const countStage = [{ $count: "totalCount" }];
+      const countStage = [{ $count: "count" }];
 
-      const [
-        {
-          results = [],
-          totalCount: [{ totalCount = 0 }],
-        },
-      ] = await wikitemplate.aggregate([
+      const [{ results = [], totalCount }] = await wikitemplate.aggregate([
         ...baseStage,
         {
           $facet: {
@@ -73,7 +68,7 @@ router.get(
 
       res.status(200).json({
         results,
-        totalCount,
+        totalCount: totalCount?.count ?? 0,
       });
     } catch (err: any) {
       logError(`Error: GET /wikicollection/patterns ${err.message}`);
