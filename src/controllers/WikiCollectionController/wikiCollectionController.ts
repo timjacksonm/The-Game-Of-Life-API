@@ -68,7 +68,7 @@ router.get(
 
       res.status(200).json({
         results,
-        totalCount: totalCount?.count ?? 0,
+        totalCount: totalCount[0]?.count ?? 0,
       });
     } catch (err: any) {
       logError(`Error: GET /wikicollection/patterns ${err.message}`);
