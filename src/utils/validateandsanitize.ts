@@ -1,15 +1,23 @@
 import { query, check, body, param } from "express-validator";
 import mongoose from "mongoose";
 import CustomTemplate from "../models/customtemplate";
+import { defaultProjection } from "../controllers/WikiCollectionController/wikiCollectionController";
+import { convertJSONToObject } from "../helpers";
 
 export const validateAndSanitize = (method: string): any => {
   switch (method) {
     case "list": {
       return [
+        query("offset")
+          .optional({ checkFalsy: true })
+          .isInt({ min: 1, max: 2339 })
+          .withMessage("Invalid value or not within range")
+          .customSanitizer((value) => parseInt(value, 10)),
         query("limit")
           .optional({ checkFalsy: true })
           .isInt({ min: 1, max: 2339 })
-          .withMessage("Invalid value or not within range"),
+          .withMessage("Invalid value or not within range")
+          .customSanitizer((value) => parseInt(value, 10)),
         query("select")
           .optional({ checkFalsy: true })
           .isJSON()
@@ -18,7 +26,20 @@ export const validateAndSanitize = (method: string): any => {
             (value) =>
               !JSON.parse(value).some((string: string) => string === "")
           )
-          .withMessage("Select value cannot be empty string"),
+          .withMessage("Select value cannot be empty string")
+          .custom((value) =>
+            JSON.parse(value).every((string: string) =>
+              defaultProjection.hasOwnProperty(string)
+            )
+          )
+          .withMessage(
+            `Selection can only contain: ${Object.keys(defaultProjection).join(
+              ", "
+            )}`
+          )
+          // converts JSON string into object that will work with mongoDB $project stage
+          // i.e. from ["id", "title"] => { id: 1, title: 1 }
+          .customSanitizer((value) => convertJSONToObject(JSON.parse(value))),
       ];
     }
     case "byid": {
@@ -36,7 +57,20 @@ export const validateAndSanitize = (method: string): any => {
             (value) =>
               !JSON.parse(value).some((string: string) => string === "")
           )
-          .withMessage("Select value cannot be empty string"),
+          .withMessage("Select value cannot be empty string")
+          .custom((value) =>
+            JSON.parse(value).every((string: string) =>
+              defaultProjection.hasOwnProperty(string)
+            )
+          )
+          .withMessage(
+            `Selection can only contain: ${Object.keys(defaultProjection).join(
+              ", "
+            )}`
+          )
+          // converts JSON string into object that will work with mongoDB $project stage
+          // i.e. from ["id", "title"] => { id: 1, title: 1 }
+          .customSanitizer((value) => convertJSONToObject(JSON.parse(value))),
       ];
     }
     case "bysearch": {

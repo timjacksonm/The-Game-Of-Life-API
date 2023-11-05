@@ -4,22 +4,32 @@ import { convertJSONToObject } from "../../helpers";
 import { validateAndSanitize } from "../../utils/validateandsanitize";
 import { IQuery } from "../../utils/interfaces";
 import { logError } from "../../utils/loggers";
+import { PipelineStage } from "mongoose";
 import wikitemplate from "../../models/wikitemplate";
 
 const router = express.Router();
 
-//**GET** patterns from wikicollection sorted small -> large -- options { select: JSON Array, count: num }
+export const defaultProjection = {
+  author: 1,
+  title: 1,
+  description: 1,
+  size: 1,
+  rleString: 1,
+};
+
+//**GET** patterns from wikicollection sorted small -> large
+// Query options { select: string[], offset: Number, limit: Number, value: string}
 router.get(
   "/wikicollection/patterns",
   validateAndSanitize("list"),
   async (req: Request, res: Response) => {
     try {
       const {
+        value,
         offset = 0,
         limit = 100,
         select,
       } = req.query as unknown as IQuery;
-      const projection = select ? convertJSONToObject(select) : { throw: 0 };
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -27,19 +37,44 @@ router.get(
         return res.status(400).json({ message: errors });
       }
 
-      const response = await wikitemplate.aggregate([
-        { $sort: { "size.x": 1, "size.y": 1, title: 1 } },
-        { $skip: Number(offset) },
-        { $limit: Number(limit) },
-        { $project: projection },
+      const baseStage: PipelineStage[] = [];
+
+      if (value)
+        baseStage.push({
+          $search: {
+            index: "wiki_title_author_search_index",
+            text: {
+              query: value,
+              path: ["title", "author"],
+            },
+          },
+        });
+
+      baseStage.push({ $project: select ?? defaultProjection });
+
+      const resultsStage = [{ $skip: offset }, { $limit: limit }];
+
+      const countStage = [{ $count: "totalCount" }];
+
+      const [
+        {
+          results = [],
+          totalCount: [{ totalCount = 0 }],
+        },
+      ] = await wikitemplate.aggregate([
+        ...baseStage,
+        {
+          $facet: {
+            results: resultsStage,
+            totalCount: countStage,
+          },
+        },
       ]);
 
-      if (!response) {
-        logError(`NotFoundError: /wikicollection/patterns No patterns found`);
-        res.status(404).json({ message: "No patterns found" });
-      }
-
-      res.status(200).json(response);
+      res.status(200).json({
+        results,
+        totalCount,
+      });
     } catch (err: any) {
       logError(`Error: GET /wikicollection/patterns ${err.message}`);
       res.status(500).json({ message: err });
@@ -55,7 +90,7 @@ router.get(
     try {
       const { select } = req.query as unknown as IQuery;
       const { id } = req.params;
-      const projection = select ? convertJSONToObject(select) : { throw: 0 };
+      const projection = select ?? defaultProjection;
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -83,53 +118,53 @@ router.get(
 );
 
 //**GET** all wikicollection patterns by search -- options { select: JSON Array, count: num }
-router.get(
-  "/wikicollection/search/:path",
-  validateAndSanitize("bysearch"),
-  async (req: Request, res: Response) => {
-    try {
-      const {
-        value,
-        offset = 0,
-        limit = 100,
-        select,
-      } = req.query as unknown as IQuery;
-      const projection = select ? convertJSONToObject(select) : { throw: 0 };
-      const errors = validationResult(req);
+// router.get(
+//   "/wikicollection/search/:path",
+//   validateAndSanitize("bysearch"),
+//   async (req: Request, res: Response) => {
+//     try {
+//       const {
+//         value,
+//         offset = 0,
+//         limit = 100,
+//         select,
+//       } = req.query as unknown as IQuery;
+//       const projection = select ? convertJSONToObject(select) : { throw: 0 };
+//       const errors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        logError(`Validation Error: ${JSON.stringify(errors)}`);
-        return res.status(400).json({ message: errors });
-      }
-      if (!value) {
-        logError(`Query Parameter Error: ${JSON.stringify(errors)}`);
-        return res
-          .status(400)
-          .json({ message: "Invalid query for req.query.value" });
-      }
+//       if (!errors.isEmpty()) {
+//         logError(`Validation Error: ${JSON.stringify(errors)}`);
+//         return res.status(400).json({ message: errors });
+//       }
+//       if (!value) {
+//         logError(`Query Parameter Error: ${JSON.stringify(errors)}`);
+//         return res
+//           .status(400)
+//           .json({ message: "Invalid query for req.query.value" });
+//       }
 
-      const response = await wikitemplate.aggregate([
-        {
-          $search: {
-            index: "custom",
-            text: {
-              query: value,
-              path: req.params.path,
-            },
-          },
-        },
-        { $sort: { "size.x": 1, "size.y": 1, title: 1 } },
-        { $skip: Number(offset) },
-        { $limit: Number(limit) },
-        { $project: projection },
-      ]);
+//       const response = await wikitemplate.aggregate([
+//         {
+//           $search: {
+//             index: "custom",
+//             text: {
+//               query: value,
+//               path: req.params.path,
+//             },
+//           },
+//         },
+//         { $sort: { "size.x": 1, "size.y": 1, title: 1 } },
+//         { $skip: Number(offset) },
+//         { $limit: Number(limit) },
+//         { $project: projection },
+//       ]);
 
-      res.status(200).json(response);
-    } catch (err: any) {
-      logError(`Error: GET /wikicollection/search/:path ${err.message}`);
-      res.status(500).json({ message: err });
-    }
-  }
-);
+//       res.status(200).json(response);
+//     } catch (err: any) {
+//       logError(`Error: GET /wikicollection/search/:path ${err.message}`);
+//       res.status(500).json({ message: err });
+//     }
+//   }
+// );
 
 export default router;

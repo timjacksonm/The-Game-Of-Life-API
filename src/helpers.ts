@@ -1,8 +1,6 @@
-export const convertJSONToObject = (value: string) => {
-  return JSON.parse(value).reduce(
-    (acc: { [x: string]: number }, curr: string | number) => (
-      (acc[curr] = 1), acc
-    ),
-    {}
-  );
+export const convertJSONToObject = (value: string[]) => {
+  return value.reduce((acc, key) => {
+    acc[key] = 1;
+    return acc;
+  }, {} as Record<string, number>);
 };
