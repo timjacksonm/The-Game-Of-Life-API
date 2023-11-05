@@ -10,7 +10,7 @@ export const validateAndSanitize = (method: string): any => {
       return [
         query("offset")
           .optional({ checkFalsy: true })
-          .isInt({ min: 1, max: 2339 })
+          .isInt({ min: 0, max: 2339 })
           .withMessage("Invalid value or not within range")
           .customSanitizer((value) => parseInt(value, 10)),
         query("limit")
