@@ -50,6 +50,7 @@ router.get(
           },
         });
 
+      baseStage.push({ $sort: { "size.x": 1, "size.y": 1 } });
       baseStage.push({ $project: select ?? defaultProjection });
 
       const resultsStage = [{ $skip: offset }, { $limit: limit }];
