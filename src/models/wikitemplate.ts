@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, model, Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
 interface IWikiTemplate extends Document {
   author: string;
@@ -37,7 +37,4 @@ const wikiTemplateSchema = new Schema({
   modifiedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model<IWikiTemplate>(
-  "WikiTemplate",
-  wikiTemplateSchema
-);
+export default mongoose.model<IWikiTemplate>('WikiTemplate', wikiTemplateSchema);

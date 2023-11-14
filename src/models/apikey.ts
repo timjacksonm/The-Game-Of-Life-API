@@ -1,8 +1,8 @@
-import mongoose, { Document, Model, model, Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
 export enum environment {
-  production = "production",
-  development = "development",
+  production = 'production',
+  development = 'development',
 }
 
 export interface IApiKey extends Document {
@@ -42,4 +42,4 @@ const apiKeySchema = new Schema({
   },
 });
 
-export default mongoose.model<IApiKey>("ApiKey", apiKeySchema);
+export default mongoose.model<IApiKey>('ApiKey', apiKeySchema);

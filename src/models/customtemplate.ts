@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
 interface ICustomTemplate extends Document {
   author: string;
@@ -42,12 +42,12 @@ const customTemplateSchema = new Schema({
   date: { type: Date, default: Date.now },
 });
 
-customTemplateSchema.statics.isUniqueTitle = async function (val: string) {
-  const result = await this.findOne({ title: val });
+customTemplateSchema.statics.isUniqueTitle = async function (val: string): Promise<boolean> {
+  const result = (await this.findOne({ title: val })) as ICustomTemplate | null;
   return !result;
 };
 
 export default mongoose.model<ICustomTemplate, TemplateModel>(
-  "CustomTemplate",
-  customTemplateSchema
+  'CustomTemplate',
+  customTemplateSchema,
 );
